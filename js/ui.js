@@ -5,7 +5,7 @@ var $saveButton = $('#saveButton');
 var $addButton = $('#addButton');
 var $checkJsonButton = $('#jsonPostJsonInput');
 
-var requestTimeout = 6000;
+var requestTimeout = 3000;
 
 var currentList;
 var newEntry = false;
@@ -232,7 +232,6 @@ function testHttp() {
       $.ajax({
         method: "GET",
         url: endpointURL,
-        timeout: requestTimeout,
         success: function(data){
           $('#testResults').html(JSON.stringify(data));
           $('#testResultsContainer').show();
@@ -264,7 +263,8 @@ function testHttp() {
                   scrollTop: $("#testResultsContainer").offset().top
               }, 1000);
           }
-        }
+        },
+        timeout: requestTimeout
       });
     }
   }
