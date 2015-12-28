@@ -117,7 +117,8 @@ function initData() {
     // This will be the default infomation with example data
     // Useful in helping newcomers learn what type of input is acceptable
     console.log("localStorage is null. Using default data.");
-    currentList = [
+    currentList = [];
+    /*[
       {
         "name" : "Example HTTP GET",
         "endpoint": "https://example.com:8080/endpoint", 
@@ -133,8 +134,9 @@ function initData() {
         "endpoint": "https://example2.com:8080/jsonendpoint",
         "json": '{"key":"value","key":"value"}'
       }
-    ];
+    ];*/
   }
+  showMainTab();
 }
 function reorderCompleted() {
   return $( "a[name=tab-2].tab-button.active" ).html() == "Reorder";
@@ -315,7 +317,7 @@ function showReorderDisplay() {
         }
       }
     });
-    $('#maintab').show();
+    showMainTab();
     $('#removeTab').removeClass("active");
     $('#reorderTab').addClass("active");
     $('#pebbleSaveButton').show();
@@ -441,6 +443,13 @@ function sendClose(saveChanges) {
 }
 
 
+function showMainTab() {
+  if (currentList.length > 0) {
+    document.getElementById('maintab').style.display = "block";
+  } else {
+    document.getElementById('maintab').style.display = "none";
+  }
+}
 
 function showHttpGetForm() {
     document.getElementById('JsonPostFields').style.display = "none";
