@@ -28,3 +28,13 @@
 .item.add-item {
   display: none;
 }
+
+div.modify {
+   content:url(/images/gear.png);
+    width: 25px;
+    height: 25px;
+    right: 7.5px;
+    top: 7.5px;
+    position: absolute;
+    border-radius: 6px;
+}

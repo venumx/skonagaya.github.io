@@ -8,6 +8,9 @@ var $checkJsonButton = $('#jsonPostJsonInput');
 var requestTimeout = 3000;
 
 var currentList;
+
+var currentIndex = null;
+
 var newEntry = false;
 
 (function() {
@@ -21,9 +24,45 @@ var newEntry = false;
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
 
+  $( "#templateList" )
+    .change(function () {
+      var selectedID = document.getElementById("templateList").options[document.getElementById("templateList").selectedIndex].id;
+
+      $('#displayedName').val(currentList[selectedID]["name"]);
+      $('#httpGetUrlInput').val(currentList[selectedID]["endpoint"]);
+      $('#jsonPostJsonInput').val(currentList[selectedID]["json"]);
+
+
+      $('#GET').removeClass("active");
+      $('#PUT').removeClass("active");
+      $('#POST').removeClass("active");
+      $('#'+currentList[selectedID]["method"]).trigger("click");
+      $('#'+currentList[selectedID]["method"]).addClass("active");
+
+    });
 
 
 })();
+
+function generateTemplates(){
+  $('#templateList').empty();
+  var newTemplateEntry = document.createElement('option');
+  newTemplateEntry.className = 'item-select-option';
+  newTemplateEntry.id = "select";
+  if (currentList.length == 0 || currentList == null) {
+    newTemplateEntry.innerHTML = "No templates to choose from";
+  } else { 
+    newTemplateEntry.innerHTML = "Select a template";
+  }
+  $('#templateList').append(newTemplateEntry);
+  for (var i=0; i < currentList.length; i++) {
+    var newTemplateEntry = document.createElement('option');
+    newTemplateEntry.id = i;
+    newTemplateEntry.className = 'item-select-option';
+    newTemplateEntry.innerHTML = currentList[i]['name'];
+    $('#templateList').append(newTemplateEntry);
+  }
+}
 
 function generateLists(){
 
@@ -45,18 +84,50 @@ function generateLists(){
     var newDragHandleBar3 = document.createElement('div');
 
     var newDeleteButton = document.createElement('div');
+    var newModifyButton = document.createElement('div');
 
     newDeleteButton.className = "delete-item";
+    newModifyButton.className = "modify";
+    
     newDeleteButton.onclick = function deleteLabelOnClick () {
-      document.getElementById('reorderList').removeChild(this.parentNode);
+      var indexToDelete = this.parentNode.id;
+
+      console.log("indexToDelete: " + indexToDelete.toString());
+
       var updatedList = [];
       $('.item-draggable-list').children('label.item').each(function() {
-        updatedList.push(currentList[this.id]);
+        console.log("Checking: " + this.id.toString());
+        if (this.id != indexToDelete) {updatedList.push(currentList[this.id]);}
+        else {console.log("Skipping");}
       });
       currentList = updatedList;
+      document.getElementById('reorderList').removeChild(this.parentNode);
+      console.log(JSON.stringify(currentList));
+      generateLists();
+      $('.item-draggable-list').children('label.item').each(function() {
+        for (var i = 0; i < this.childNodes.length; i++) {
+          var currentClass = this.childNodes[i].className;
+          if (currentClass == "delete-item") {
+            this.childNodes[i].style.visibility = "visible";
+          } else if (currentClass == "item-draggable-handle") {
+            this.childNodes[i].style.visibility = "hidden";
+          } else if (currentClass == "modify") {
+            this.childNodes[i].style.visibility = "hidden";
+          }
+        }
+      });
     }
+
+    newModifyButton.onclick = function modifyLabelOnClick () {
+      showCreateDisplay(parseInt(this.parentNode.id));
+    }
+
     newDeleteButton.style.visibility = "hidden";
     newDeleteButton.id = "deleteButton"+i.toString();
+
+    newModifyButton.style.visibility = "hidden";
+    newModifyButton.id = "modifyButton"+i.toString();
+
 
     newDragHandle.className = "item-draggable-handle";
     newDragHandleBar1.className = "item-draggable-handle-bar";
@@ -68,9 +139,9 @@ function generateLists(){
     newDragHandle.appendChild(newDragHandleBar3);
 
     newDragLabel.appendChild(newDeleteButton);
+    newDragLabel.appendChild(newModifyButton);
 
     newDragLabel.appendChild(newDragHandle);
-
 
     $('.item-draggable-list').append(newDragLabel);
     
@@ -78,7 +149,7 @@ function generateLists(){
 
   var addItemDraggable = document.createElement('div');
   addItemDraggable.className = "item addNewButton";
-  addItemDraggable.innerHTML = '<a href="#" onclick="showCreateDisplay();">Create a New Request</a>';
+  addItemDraggable.innerHTML = '<a href="#" onclick="showCreateDisplay(null);">Create a New Request</a>';
 
 
   $('.item-draggable-list').parent().append(addItemDraggable);
@@ -384,16 +455,45 @@ function showReorderDisplay() {
     });
     showMainTab();
     $('#removeTab').removeClass("active");
+    $('#modifyTab').removeClass("active");
     $('#reorderTab').addClass("active");
     $('#pebbleSaveButton').show();
     $('#pebbleCancelButton').show();
 }
 
-function showCreateDisplay() {
+function showCreateDisplay(usingIndex) {
     // Show the div that contains user entry fields
+
     reconcileList();
     generateLists();
     clearFields();
+
+    generateTemplates();
+
+
+    $('#modifyExistingButton').hide();
+    $('#createNewButton').show();
+
+    if (usingIndex != null) {
+
+      currentIndex = usingIndex;
+
+      $('#createNewButton').hide();
+      $('#modifyExistingButton').show();
+
+      //$('#'+currentList[usingIndex]["method"]).trigger('click');
+      $('#GET').removeClass("active");
+      $('#PUT').removeClass("active");
+      $('#POST').removeClass("active");
+      $('#'+currentList[usingIndex]["method"]).trigger("click");
+      $('#'+currentList[usingIndex]["method"]).addClass("active");
+
+
+      $('#displayedName').val(currentList[usingIndex]["name"]);
+      $('#httpGetUrlInput').val(currentList[usingIndex]["endpoint"]);
+      $('#jsonPostJsonInput').val(currentList[usingIndex]["json"]);
+    }
+
     document.getElementById('createNewFields').style.display = "block";
     document.getElementById('reorderFields').style.display = "none";
 
@@ -405,6 +505,10 @@ function showCreateDisplay() {
 
 function showRemoveDisplay() {
 
+    reconcileList();
+    generateLists();
+    clearFields();
+
     $('.item-draggable-list').children('label.item').each(function() {
       for (var i = 0; i < this.childNodes.length; i++) {
         var currentClass = this.childNodes[i].className;
@@ -412,9 +516,43 @@ function showRemoveDisplay() {
           this.childNodes[i].style.visibility = "visible";
         } else if (currentClass == "item-draggable-handle") {
           this.childNodes[i].style.visibility = "hidden";
+        } else if (currentClass == "modify") {
+          this.childNodes[i].style.visibility = "hidden";
         }
       }
     });
+}
+
+function showModifyDisplay() {
+
+    reconcileList();
+    generateLists();
+    clearFields();
+
+    generateTemplates();
+
+    document.getElementById('createNewFields').style.display = "none";
+    document.getElementById('reorderFields').style.display = "block";
+
+    $('.item-draggable-list').children('label.item').each(function() {
+      for (var i = 0; i < this.childNodes.length; i++) {
+        var currentClass = this.childNodes[i].className;
+        if (currentClass == "modify") {
+          this.childNodes[i].style.visibility = "visible";
+        } else if (currentClass == "delete-item") {
+          this.childNodes[i].style.visibility = "hidden";
+        } else if (currentClass == "item-draggable-handle") {
+          this.childNodes[i].style.visibility = "hidden";
+        }
+      }
+    });
+
+    showMainTab();
+    $('#removeTab').removeClass("active");
+    $('#reorderTab').removeClass("active");
+    $('#modifyTab').addClass("active");
+    $('#pebbleSaveButton').show();
+    $('#pebbleCancelButton').show();
 }
 
 function clearFields() {
@@ -423,11 +561,49 @@ function clearFields() {
   $('#jsonPostJsonInput').val('');
 }
 
+function modifyExistingEntry() {
+
+  var displayedName = $('#displayedName').val();
+  var endpointURL = $('#httpGetUrlInput').val();
+  var jsonString = $('#jsonPostJsonInput').val();
+  var methodType = $( "a[name=tab-1].tab-button.active" ).attr('id');
+
+  if (displayedName == null || displayedName == "")
+  {
+      animateRed($('#displayedName').parent());
+
+  } else if (endpointURL == null || endpointURL == "") {
+      animateRed($('#httpGetUrlInput').parent());
+  } else if ((jsonString == null || jsonString == "") && jsonSelected()) {
+      animateRed($('#jsonPostJsonInput'));
+  } else {
+    if (jsonSelected() || jsonPutSelected()) {
+      currentList[currentIndex]["name"] = displayedName;
+      currentList[currentIndex]["endpoint"] = endpointURL;
+      currentList[currentIndex]["json"] = jsonString;
+      currentList[currentIndex]["method"] = methodType;
+    } else {
+      currentList[currentIndex]["name"] = displayedName;
+      currentList[currentIndex]["endpoint"] = endpointURL;
+      currentList[currentIndex]["json"] = "";
+      currentList[currentIndex]["method"] = methodType;
+
+    }
+    newEntry = true;
+    showModifyDisplay();
+    $('#removeTab').removeClass("active");
+    $('#reorderTab').removeClass("active");
+    $('#modifyTab').addClass("active");
+
+  }
+}
+
 function createNewEntry() {
 
   var displayedName = $('#displayedName').val();
   var endpointURL = $('#httpGetUrlInput').val();
   var jsonString = $('#jsonPostJsonInput').val();
+  var methodType = $( "a[name=tab-1].tab-button.active" ).attr('id');
 
   if (displayedName == null || displayedName == "")
   {
@@ -443,18 +619,19 @@ function createNewEntry() {
         "name": displayedName,
         "endpoint": endpointURL,
         "json": jsonString,
-        "method": $( "a[name=tab-1].tab-button.active" ).attr('id')
+        "method": methodType
       });
     } else {
         currentList.push({
         "name": displayedName,
         "endpoint": endpointURL,
         "json": "",
-        "method": $( "a[name=tab-1].tab-button.active" ).attr('id')
+        "method": methodType
       });
     }
     newEntry = true;
     showReorderDisplay();
+    $('#modifyTab').removeClass("active");
     $('#removeTab').removeClass("active");
     $('#reorderTab').addClass("active");
 
