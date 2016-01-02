@@ -15,8 +15,6 @@ var newEntry = false;
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
 
-  console.log(localStorage);
-
   initData();
   generateLists();
 
@@ -148,11 +146,16 @@ function createCompleted() {
 function jsonSelected() {
   return $( "a[name=tab-1].tab-button.active" ).html() == "POST JSON";
 }
+function jsonPutSelected() {
+  return $( "a[name=tab-1].tab-button.active" ).html() == "PUT JSON";
+}
 
 function testHttp() {
   var displayedName = $('#displayedName').val();
   var endpointURL = $('#httpGetUrlInput').val();
   var jsonString = $('#jsonPostJsonInput').val();
+
+
 
   if (displayedName == null || displayedName == "")
   {
@@ -182,12 +185,12 @@ function testHttp() {
         }
       });
   */
+
       $.ajax({
         method: "POST",
         url: endpointURL,
         data: JSON.parse(jsonString),
         dataType: "json",
-        timeout: requestTimeout,
         success: function(data){
           $('#testResults').html(JSON.stringify(data));
           $('#testResultsContainer').show();
@@ -227,7 +230,70 @@ function testHttp() {
         }
       });
     }
-    else {
+    else if (jsonPutSelected()) {
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('PUT', endpointURL);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+        console.log("Received response from server");
+          if (xhr.status === 200) {
+            $('#testResults').html(JSON.stringify(xhr.responseText));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+              //var userInfo = JSON.parse(xhr.responseText);
+          } else {
+            $('#testResults').html(JSON.stringify(xhr.statusText ));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+          }
+      };
+      xhr.onreadystatechange = function (oEvent) {  
+        console.log("Received response for PUT request");
+        if (xhr.readyState === 4) {  
+          if (xhr.status === 200) {  
+            $('#testResults').html(JSON.stringify(xhr.responseText));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+          } else if (xhr.status === 0) {
+            $('#testResults').html("Encountered an error. Make sure Access-Control headers are configured. " + JSON.stringify(xhr.responseText ));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+          } else {
+            $('#testResults').html("Encountered an error " + JSON.stringify(xhr.responseText ));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+          } 
+        }  
+      }; 
+
+      xhr.send(jsonString);
+      console.log("Sending Put request: " + jsonString);
+
+
+      //xhr.send(JSON.stringify({"mode":"signal","state":"on","channel":"tv"}));
+
+    } else {
 
 
 
@@ -265,8 +331,7 @@ function testHttp() {
                   scrollTop: $("#testResultsContainer").offset().top
               }, 1000);
           }
-        },
-        timeout: requestTimeout
+        }
       });
     }
   }
@@ -373,17 +438,19 @@ function createNewEntry() {
   } else if ((jsonString == null || jsonString == "") && jsonSelected()) {
       animateRed($('#jsonPostJsonInput'));
   } else {
-    if (jsonSelected()) {
+    if (jsonSelected() || jsonPutSelected()) {
       currentList.push({
         "name": displayedName,
         "endpoint": endpointURL,
-        "json": jsonString
+        "json": jsonString,
+        "method": $( "a[name=tab-1].tab-button.active" ).attr('id')
       });
     } else {
         currentList.push({
         "name": displayedName,
         "endpoint": endpointURL,
-        "json": ""
+        "json": "",
+        "method": $( "a[name=tab-1].tab-button.active" ).attr('id')
       });
     }
     newEntry = true;
