@@ -129,9 +129,15 @@ function generateTemplates(){
   }
 }
 
-function generateRequestHtml(entryName,entryId,parentNode) {
+function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
+  var liClassName = "dd-item dd-nonest";
+
+  if (markDeleted) {
+    liClassName = liClassName + " dd-deleted";
+  }
+
   var newLi = document.createElement('li');
-  newLi.setAttribute("class", "dd-item dd-nonest");
+  newLi.setAttribute("class", liClassName);
   newLi.setAttribute("data-id", entryId);
 
   var newRemoveButton = document.createElement('button');
@@ -160,7 +166,12 @@ function generateRequestHtml(entryName,entryId,parentNode) {
   newHandle.setAttribute("class", "dd-handle");
   newHandle.innerHTML = entryName;
 
-  newRemoveButton.appendChild(newRemoveIcon);
+  if (markDeleted) {
+    newRemoveButton.innerHTML = 'undo';
+    $(newLi).data('isDeleted',true);
+  } else {
+    newRemoveButton.appendChild(newRemoveIcon);  
+  }
   newModifyButton.appendChild(newModifyIcon);
 
   newLi.appendChild(newRemoveButton);
@@ -171,9 +182,15 @@ function generateRequestHtml(entryName,entryId,parentNode) {
 
 }
 
-function generateFolderHtml(folderName,folderId,parentNode){
+function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
+  var liClassName = "dd-item";
+
+  if (markDeleted) {
+    liClassName = liClassName + " dd-deleted";
+  }
+
   var newLi = document.createElement('li');
-  newLi.setAttribute("class", "dd-item");
+  newLi.setAttribute("class", liClassName);
   newLi.setAttribute("data-id", folderId);
 
   var newRemoveButton = document.createElement('button');
@@ -223,7 +240,13 @@ function generateFolderHtml(folderName,folderId,parentNode){
   var newOl = document.createElement('ol');
   newOl.setAttribute("class","dd-list");
 
-  newRemoveButton.appendChild(newRemoveIcon);
+  if (markDeleted) {
+    newRemoveButton.innerHTML = 'undo';
+    $(newLi).data('isDeleted',true);
+  } else {
+    newRemoveButton.appendChild(newRemoveIcon);  
+  }
+  
   newModifyButton.appendChild(newModifyIcon);
 
 
@@ -249,17 +272,18 @@ function generateFolderHtml(folderName,folderId,parentNode){
 function generateList(parentNode,nextList,ddIndex) {
 
   for (var i=0; i < nextList.length; i++) {
+    var markDelete = nextList[i]["toDelete"];
     if (nextList[i]["type"] == null ||     //If null, mean's it's before folders 
       nextList[i]["type"] == 'request') {  //feature was added. And should be 
                                               //treated as a request
       //createListHtml(nextList[i]["name"],i);
-      generateRequestHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+      generateRequestHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode,markDelete);
     } else if (nextList[i]["type"] == 'folder'){
       var nextRoot = null;
       if (nextList[i]["list"] === undefined || nextList[i]["list"] == []) {
-        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode,markDelete);
       } else {
-        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode,markDelete);
       }
 
       $('button[data-action=expand]').hide();
@@ -360,7 +384,7 @@ function extractDataReference(indexString) {
   return currentListIndex;
 }
 
-function reconcileFolder(nextList) {
+function reconcileFolder(nextList,purgeDeleted) {
 
   var currentLevelList = []
 
@@ -370,17 +394,24 @@ function reconcileFolder(nextList) {
     var currentChild = nextList[i]["children"];
     var currentNode = $("li[data-id='"+currentId+"']");
 
+    var markedForDeletion = (nextList[i]["isDeleted"] == undefined)?false:nextList[i]["isDeleted"];
+
+    if (purgeDeleted && markedForDeletion) { continue; }
+
     console.log("Evaluating: " + currentId.toString());
     console.log(" and CurrentList: " + JSON.stringify(currentList));
 
     if (currentNode.hasClass('dd-nonest')) { // Request
       //currentLevelList.push(dataListLevel[currentId]);
       console.log("Extracting request: " + JSON.stringify(extractData(currentId)));
-      currentLevelList.push(extractData(currentId));
+      var currentListToHTML = extractData(currentId);
+      currentListToHTML["toDelete"] = markedForDeletion;
+      currentLevelList.push(currentListToHTML);
     } else { // Folder
 
       // Get previous state of currentList
       var tempFolder = extractData(currentId);
+      tempFolder["toDelete"] = markedForDeletion;
       console.log("tempFolder: " + JSON.stringify(tempFolder));
 
       // Recurse thru child
@@ -389,7 +420,7 @@ function reconcileFolder(nextList) {
         tempFolder["list"] = [];
       } else {
 
-        tempFolder["list"] = reconcileFolder(currentChild);
+        tempFolder["list"] = reconcileFolder(currentChild,purgeDeleted);
       }
       console.log("tempFolder[\"list\"]: " + JSON.stringify(tempFolder["list"]));
       currentLevelList.push(tempFolder);
@@ -401,7 +432,7 @@ function reconcileFolder(nextList) {
   return currentLevelList;
 }
 
-function reconcileList() {
+function reconcileList(purgeDeleted) {
   var updatedList = [];
   var iteratingFolder = false;
   var currentFolder = null;
@@ -413,7 +444,7 @@ function reconcileList() {
     console.clear();
     console.log(" === Serialized before: " + JSON.stringify(serializedList));
     console.log(" === Currentlist before: " + JSON.stringify(currentList));
-    updatedList = reconcileFolder(serializedList);
+    updatedList = reconcileFolder(serializedList,purgeDeleted);
 
     /*
     $('ol.dd-list').children().each(function() {
@@ -691,7 +722,7 @@ function resetAfterCreation() {
 }
 
 function showReorderDisplay() {
-  reconcileList();
+  reconcileList(false);
   generateLists();
   clearFields();
   document.getElementById('createNewFields').style.display = "none";
@@ -702,6 +733,8 @@ function showReorderDisplay() {
 }
 
 function showCreateFolderDisplay() {
+    reconcileList(false);
+    generateLists();
     clearFields();
 
     $('#modifyExistingFolderButton').hide();
@@ -718,7 +751,7 @@ function showCreateFolderDisplay() {
 function showCreateDisplay(usingIndex) {
     // Show the div that contains user entry fields
 
-    reconcileList();
+    reconcileList(false);
     generateLists();
 
     var isRequest = (usingIndex == null || usingIndex["type"] == "request");
@@ -779,14 +812,14 @@ function showCreateDisplay(usingIndex) {
 
 function showRemoveDisplay() {
 
-  reconcileList();
+  reconcileList(false);
   generateLists();
   clearFields();  
 }
 
 function showModifyDisplay() {
 
-  reconcileList();
+  reconcileList(false);
   generateLists();
   clearFields();
 
@@ -945,7 +978,7 @@ function sendClose(saveChanges) {
   console.log("Sending close");
 
   if (saveChanges) {
-    reconcileList();
+    reconcileList(true);
 
     // Set the return URL depending on the runtime environment
     var return_to = getQueryParam('return_to', 'pebblejs://close#');
