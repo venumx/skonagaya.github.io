@@ -38,3 +38,7 @@ div.modify {
     position: absolute;
     border-radius: 6px;
 }
+
+div.dd-modify{
+  content:url(/images/gear.png);
+}

@@ -1,55 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>HTTP Push Configuration Page</title>
+  <link rel='stylesheet' type='text/css' href='/css/bootstrap.css'>
   <link rel='stylesheet' type='text/css' href='/bower_components/Slate/dist/css/slate.min.css'>
   <link rel='stylesheet' type='text/css' href='/css/style.css'>
+  <link rel='stylesheet' type='text/css' href='/css/dd.css'>
 </head>
 <body>
-  <!-- Initially, users are presented with draggable interface.
-       The delete, and add new buttons swaps the draggable tables -->
-
-  <!-- Title -->
-  <div class='item-container'>
-    <h1 class='title'>HTTP Push Configuration</h1>
-  </div>
-
-    <!-- Description body up at top -->
-  <div class='item-container'>
-    <div class='item-container-content'>
-      <div class='item'>
-        Add, remove, and reorder your HTTP requests
-      </div>
-    </div>
-  </div>
-
-
-  <div id="maintab" class='item-container'>
-      <div class="item-container-header">Action to perform</div>
-    <div class="item-container-content">
-      <div class="item tab-buttons">
-        <a name="tab-2" id="reorderTab" onclick ="showReorderDisplay();" class="tab-button active">Reorder</a>
-        <a name="tab-2" id="modifyTab" onclick="showModifyDisplay();" class="tab-button">Modify</a>
-        <a name="tab-2" id="removeTab" onclick="showRemoveDisplay();" class="tab-button">Remove</a>
-      </div>
-    </div>
-  </div>
-
 
   <!-- The list of items that are draggable and dynamically created -->
   <div id='reorderFields' class='item-container'>
-    <div class="item-container">
-      <div class="item-container-header">Configured Requests</div>
+    <div class="item-container">    
+      <div class="item-container-header">Folder Display Name</div>
+      <div class="item-container-content">
+
+        <div class="cf nestable-lists">
+          <div class="dd" id="nestable">
+              <ol class="dd-list" id="dd-root">
+              </ol>
+          </div>
+        </div>
+
+      </div>
+    <div class="item-container">    
       <div class="item-container-content">
         <div id="reorderList" class="item-draggable-list">
-          </ul>
         </div>
       </div>
-      <!-- Footer -->
-      <div class='item-container-footer'>
-        Drag your requests to change the order as they appear on your pebble.
+    </div>
+  </div>
+</div>
+    <!-- The list of items that are draggable and dynamically created -->
+  <div id='createNewFolderFields' class='item-container'>
+    <div class="item-container">
+      <!-- field to enter name of the request -->
+      <div class="item-container-header">Folder Display Name</div>
+      <div class="item-container-content">
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input id="folderDisplayedName" maxlength="30" type="text" class="item-input" name="input-1" placeholder="Example: Living Room">
+          </div>
+        </label>
       </div>
+      <div class="item-container-footer">
+        Enter the name of the folder that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.
+      </div>
+
+      <div class="item-container">
+        <div class="button-container">
+          <input id="createNewFolderButton" onclick="createNewFolder();" type="button" class="item-button" value="Save Folder">
+          <input id="modifyExistingFolderButton" onclick="modifyExistingFolder();" type="button" class="item-button" value="Save Folder">
+        </div>
+      </div>
+
+      <div class="item-container">
+        <div class="button-container">
+          <input onclick="showModifyDisplay();" type="button" class="item-button" value="Cancel">
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -157,7 +168,7 @@
     </div>
     <div class="item-container">
       <div class="button-container">
-        <input onclick="showReorderDisplay();" type="button" class="item-button" value="Cancel">
+        <input onclick="showModifyDisplay();" type="button" class="item-button" value="Cancel">
       </div>
     </div>
     <div id="testResultsContainer" class="item-container">
@@ -173,32 +184,9 @@
   
   <div id="pebbleSaveButton" class='item-container'>
     <div class='button-container'>
-      <input onclick="sendClose(true);" type='button' class='item-button' value='Save Changes'>
+      <input onclick="sendClose(true);" type='button' class='item-button' value='Save and Exit'>
     </div>
   </div> 
-  <div id="pebbleCancelButton" class='item-container'>
-    <div class='button-container'>
-      <input onclick="sendClose(false);" type='button' class='item-button' value='Cancel'>
-    </div>
-  </div> 
-
-  <div style='visibility: hidden' class='item-container' style='margin-top:50px'>
-    <div class='item-container-content'>
-      <div class='item'>
-      <div class='item-container-footer' style="text-align: center;">
-        Buy the developers a sandwich!
-      </div>
-<form style="text-align: center;" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-
-      </div>
-    </div>
-  </div>
 
 <!--
   <div id="pebbleSaveButton" class='item-container'>
@@ -207,12 +195,13 @@
     </div>
   </div>
 -->
-<iframe id="getFrame"></iframe>
   
   <script src='/bower_components/Slate/dist/js/slate.min.js'></script>
   
   <script src='/js/jquery-2.1.4.min.js'></script>
   <script src='/js/jquery.color.min.js'></script>
+
+  <script src='/js/jquery.nestable.js'></script>
 
   <script src='/js/main.js'></script>
   <script src='/js/ui.js'></script>

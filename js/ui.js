@@ -6,11 +6,8 @@ var $addButton = $('#addButton');
 var $checkJsonButton = $('#jsonPostJsonInput');
 
 var requestTimeout = 3000;
-
 var currentList;
-
 var currentIndex = null;
-
 var newEntry = false;
 
 (function() {
@@ -18,11 +15,12 @@ var newEntry = false;
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
 
-  initData();
-  generateLists();
 
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
+  $('#createNewFolderFields').hide();
+
+
 
   $( "#templateList" )
     .change(function () {
@@ -39,10 +37,77 @@ var newEntry = false;
       $('#'+currentList[selectedID]["method"]).trigger("click");
       $('#'+currentList[selectedID]["method"]).addClass("active");
 
-    });
+  });
 
+
+  /*
+  Setting up the DD list
+  */
+
+  var updateOutput = function(e)
+  {
+      var list   = e.length ? e : $(e.target),
+          output = list.data('output');
+      if (window.JSON) {
+          output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+      } else {
+          output.val('JSON browser support required for this demo.');
+      }
+  };
+
+  // activate Nestable for list 1
+  $('#nestable').nestable({
+      group: 1,
+      noDragClass     : 'dd-nodrag',
+  expandBtnHTML   : '<button class="dd-action" data-action="expand" type="button"><i class="icon-chevron-right"></i></button>',
+  collapseBtnHTML : '<button class="dd-action" data-action="collapse" type="button"><i class="icon-chevron-down"></i></button>',
+  customActions   : {
+    'remove'    : function(item,button) {
+      if( item.hasClass('dd-deleted') ) {
+        item.data('isDeleted',false).removeClass('dd-deleted');
+        button.html('<i class="icon-remove"></i>');
+      }
+      else {
+        item.data('isDeleted',true).addClass('dd-deleted');
+        button.html('undo');
+      }
+    }
+  }
+  })
+  .on('change', updateOutput);
+
+  var updateList = [];
+
+  // output initial serialised data
+  updateOutput($('#nestable').data('output', $('#nestable-output')));
+
+  initData();
+  generateLists();
+  //$("button[title='Remove']").hide();
+
+/*
+  $('#nestable').on('change', function() {
+
+    $('.dd-list').children('.dd-item').each(function() {
+      console.log("Checking: " + this.getAttribute('data-id').toString());
+      if ($(this).hasClass('dd-nonest')) {
+        console.log ('Appending Request');
+
+      } else {
+        console.log ('Folder!');
+      }
+    });   
+
+  });
+
+*/
 
 })();
+
+
+
+function testingItOut() {
+}
 
 function generateTemplates(){
   $('#templateList').empty();
@@ -64,115 +129,310 @@ function generateTemplates(){
   }
 }
 
+function generateRequestHtml(entryName,entryId,parentNode) {
+  var newLi = document.createElement('li');
+  newLi.setAttribute("class", "dd-item dd-nonest");
+  newLi.setAttribute("data-id", entryId);
+
+  var newRemoveButton = document.createElement('button');
+  newRemoveButton.setAttribute("class", "dd-action pull-right");
+  newRemoveButton.setAttribute("type", "button");
+  newRemoveButton.setAttribute("data-action", "remove");
+  newRemoveButton.setAttribute("title", "Remove");
+
+  var newRemoveIcon = document.createElement('i');
+  newRemoveIcon.setAttribute("class", "icon-remove");
+
+  var newModifyButton = document.createElement('button');
+  newModifyButton.setAttribute("class", "dd-action pull-right");
+  newModifyButton.setAttribute("type", "button");
+  newModifyButton.setAttribute("title", "Modify");
+
+  newModifyButton.onclick = function modifyLabelOnClick () {
+    var thisIndex = this.parentNode.getAttribute("data-id");
+    showCreateDisplay(extractDataReference(thisIndex));
+  }
+
+  var newModifyIcon = document.createElement('i');
+  newModifyIcon.setAttribute("class", "icon-cog");
+
+  var newHandle = document.createElement('div');
+  newHandle.setAttribute("class", "dd-handle");
+  newHandle.innerHTML = entryName;
+
+  newRemoveButton.appendChild(newRemoveIcon);
+  newModifyButton.appendChild(newModifyIcon);
+
+  newLi.appendChild(newRemoveButton);
+  newLi.appendChild(newModifyButton);
+  newLi.appendChild(newHandle);
+
+  parentNode.append(newLi);
+
+}
+
+function generateFolderHtml(folderName,folderId,parentNode){
+  var newLi = document.createElement('li');
+  newLi.setAttribute("class", "dd-item");
+  newLi.setAttribute("data-id", folderId);
+
+  var newRemoveButton = document.createElement('button');
+  newRemoveButton.setAttribute("class", "dd-action pull-right");
+  newRemoveButton.setAttribute("type", "button");
+  newRemoveButton.setAttribute("data-action", "remove");
+  newRemoveButton.setAttribute("title", "Remove");
+
+  var newRemoveIcon = document.createElement('i');
+  newRemoveIcon.setAttribute("class", "icon-remove");
+
+  var newModifyButton = document.createElement('button');
+  newModifyButton.setAttribute("class", "dd-action pull-right");
+  newModifyButton.setAttribute("type", "button");
+  newModifyButton.setAttribute("title", "Modify");
+
+  newModifyButton.onclick = function modifyLabelOnClick () {
+    var thisIndex = this.parentNode.getAttribute("data-id");
+    showCreateDisplay(extractDataReference(thisIndex));
+  }
+
+  var newModifyIcon = document.createElement('i');
+  newModifyIcon.setAttribute("class", "icon-cog");
+
+  var newExpandButton = document.createElement('button');
+  newExpandButton.setAttribute("class", "dd-action");
+  newExpandButton.setAttribute("data-action", "expand");
+  newExpandButton.setAttribute("type", "button");
+  newExpandButton.setAttribute("id", "custom");
+
+  var newExpandIcon = document.createElement('i');
+  newExpandIcon.setAttribute("class", "icon-chevron-right");
+
+  var newCollapseButton = document.createElement('button');
+  newCollapseButton.setAttribute("class", "dd-action");
+  newCollapseButton.setAttribute("data-action", "collapse");
+  newCollapseButton.setAttribute("type", "button");
+  newCollapseButton.setAttribute("id", "custom");
+
+  var newCollapseIcon = document.createElement('i');
+  newCollapseIcon.setAttribute("class", "icon-chevron-down");
+
+  var newHandle = document.createElement('div');
+  newHandle.setAttribute("class", "dd-handle");
+  newHandle.innerHTML = folderName;
+
+  var newOl = document.createElement('ol');
+  newOl.setAttribute("class","dd-list");
+
+  newRemoveButton.appendChild(newRemoveIcon);
+  newModifyButton.appendChild(newModifyIcon);
+
+
+  newExpandButton.appendChild(newExpandIcon);
+  newCollapseButton.appendChild(newCollapseIcon);
+
+  newLi.appendChild(newRemoveButton);
+  newLi.appendChild(newModifyButton);
+  
+  newLi.appendChild(newExpandButton);
+  newLi.appendChild(newCollapseButton);
+
+  newLi.appendChild(newHandle);
+  newLi.appendChild(newOl);
+
+  parentNode.append(newLi);
+
+
+  return $(newOl);
+
+}
+
+function generateList(parentNode,nextList,ddIndex) {
+
+  for (var i=0; i < nextList.length; i++) {
+    if (nextList[i]["type"] == null ||     //If null, mean's it's before folders 
+      nextList[i]["type"] == 'request') {  //feature was added. And should be 
+                                              //treated as a request
+      //createListHtml(nextList[i]["name"],i);
+      generateRequestHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+    } else if (nextList[i]["type"] == 'folder'){
+      var nextRoot = null;
+      if (nextList[i]["list"] === undefined || nextList[i]["list"] == []) {
+        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+      } else {
+        nextRoot = generateFolderHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode);
+      }
+
+      $('button[data-action=expand]').hide();
+      //$('button[data-action=collapse]').hide();
+
+      //createListHtml("(Folder) " + nextList[i]["name"],i);
+      var nestedList = nextList[i]["list"];
+
+      console.log("going to consume folder content: " + JSON.stringify(nestedList));
+
+      generateList(nextRoot,nestedList,(ddIndex?ddIndex+"-":"") + i.toString());
+    }
+  }
+}
+
 function generateLists(){
 
+  var rootNode = $('#dd-root');
+
+  rootNode.empty();
+  $('.item.addNewButton').remove();
+
+  console.log("Current List at Root!:")
+  console.log(JSON.stringify(currentList));
+
+  generateList(rootNode,currentList,"");
+
+/*
 
   $('.item-draggable-list').empty();
   $('.item.addNewButton').remove();
   for (var i=0; i < currentList.length; i++) {
 
-    // Create a row for the draggable list
-    var newDragLabel = document.createElement('label');
-    newDragLabel.className = "item";
-    newDragLabel.innerHTML = currentList[i]["name"];
-    newDragLabel.name = currentList[i]["name"];
-    newDragLabel.id = i;
-
-    var newDragHandle = document.createElement('div');
-    var newDragHandleBar1 = document.createElement('div');
-    var newDragHandleBar2 = document.createElement('div');
-    var newDragHandleBar3 = document.createElement('div');
-
-    var newDeleteButton = document.createElement('div');
-    var newModifyButton = document.createElement('div');
-
-    newDeleteButton.className = "delete-item";
-    newModifyButton.className = "modify";
     
-    newDeleteButton.onclick = function deleteLabelOnClick () {
-      var indexToDelete = this.parentNode.id;
+    if (currentList[i]["type"] == null ||     //If null, mean's it's before folders 
+      currentList[i]["type"] == 'request') {  //feature was added. And should be 
+                                              //treated as a request
+      createRequestHtml(currentList[i]["name"],i);
+    } else if (currentList[i]["type"] == 'folder'){
 
-      console.log("indexToDelete: " + indexToDelete.toString());
+      createRequestHtml(currentList[i]["name"],i);
+      var nestedList = currentList[i]["list"];
 
-      var updatedList = [];
-      $('.item-draggable-list').children('label.item').each(function() {
-        console.log("Checking: " + this.id.toString());
-        if (this.id != indexToDelete) {updatedList.push(currentList[this.id]);}
-        else {console.log("Skipping");}
-      });
-      currentList = updatedList;
-      document.getElementById('reorderList').removeChild(this.parentNode);
-      console.log(JSON.stringify(currentList));
-      generateLists();
-      $('.item-draggable-list').children('label.item').each(function() {
-        for (var i = 0; i < this.childNodes.length; i++) {
-          var currentClass = this.childNodes[i].className;
-          if (currentClass == "delete-item") {
-            this.childNodes[i].style.visibility = "visible";
-          } else if (currentClass == "item-draggable-handle") {
-            this.childNodes[i].style.visibility = "hidden";
-          } else if (currentClass == "modify") {
-            this.childNodes[i].style.visibility = "hidden";
-          }
-        }
-      });
+      for (var o=0; o < nestedList.length; o++) {
+        createRequestHtml(nestedList,o);
+      }
     }
-
-    newModifyButton.onclick = function modifyLabelOnClick () {
-      showCreateDisplay(parseInt(this.parentNode.id));
-    }
-
-    newDeleteButton.style.visibility = "hidden";
-    newDeleteButton.id = "deleteButton"+i.toString();
-
-    newModifyButton.style.visibility = "hidden";
-    newModifyButton.id = "modifyButton"+i.toString();
-
-
-    newDragHandle.className = "item-draggable-handle";
-    newDragHandleBar1.className = "item-draggable-handle-bar";
-    newDragHandleBar2.className = "item-draggable-handle-bar";
-    newDragHandleBar3.className = "item-draggable-handle-bar";
-
-    newDragHandle.appendChild(newDragHandleBar1);
-    newDragHandle.appendChild(newDragHandleBar2);
-    newDragHandle.appendChild(newDragHandleBar3);
-
-    newDragLabel.appendChild(newDeleteButton);
-    newDragLabel.appendChild(newModifyButton);
-
-    newDragLabel.appendChild(newDragHandle);
-
-    $('.item-draggable-list').append(newDragLabel);
-    
+    $('#reorderList').nestable({ });
   }
+  */
 
   var addItemDraggable = document.createElement('div');
   addItemDraggable.className = "item addNewButton";
-  addItemDraggable.innerHTML = '<a href="#" onclick="showCreateDisplay(null);">Create a New Request</a>';
+  addItemDraggable.innerHTML = '<a href="#" onclick="showCreateDisplay(null);">Create Request</a>';
 
+  var addFolderItemDraggable = document.createElement('div');
+  addFolderItemDraggable.className = "item addNewButton";
+  addFolderItemDraggable.innerHTML = '<a href="#" onclick="showCreateFolderDisplay();">Create Folder</a>';
 
   $('.item-draggable-list').parent().append(addItemDraggable);
+  $('.item-draggable-list').parent().append(addFolderItemDraggable);
 
   // Reload slate to enable dynamic content 
 
 }
 
+function extractData(indexString) {
+  var indexArray = indexString.split("-");
+  var currentListIndex = JSON.parse(JSON.stringify(currentList));
+
+  for (var i=0; i < indexArray.length; i++) {
+    if (currentListIndex["type"] == "folder") {
+      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])]; 
+    }
+    else {
+      currentListIndex = currentListIndex[parseInt(indexArray[i])]; 
+    }
+  }
+
+  //console.log("Extract returning: " + JSON.stringify(currentListIndex));
+  return currentListIndex;
+}
+
+function extractDataReference(indexString) {
+  var indexArray = indexString.split("-");
+  var currentListIndex = currentList;
+
+  for (var i=0; i < indexArray.length; i++) {
+    if (currentListIndex["type"] == "folder") {
+      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])]; 
+    }
+    else {
+      currentListIndex = currentListIndex[parseInt(indexArray[i])]; 
+    }
+  }
+
+  //console.log("Extract returning: " + JSON.stringify(currentListIndex));
+  return currentListIndex;
+}
+
+function reconcileFolder(nextList) {
+
+  var currentLevelList = []
+
+  for (var i=0; i < nextList.length; i++) {
+
+    var currentId = nextList[i]["id"].toString();
+    var currentChild = nextList[i]["children"];
+    var currentNode = $("li[data-id='"+currentId+"']");
+
+    console.log("Evaluating: " + currentId.toString());
+    console.log(" and CurrentList: " + JSON.stringify(currentList));
+
+    if (currentNode.hasClass('dd-nonest')) { // Request
+      //currentLevelList.push(dataListLevel[currentId]);
+      console.log("Extracting request: " + JSON.stringify(extractData(currentId)));
+      currentLevelList.push(extractData(currentId));
+    } else { // Folder
+
+      // Get previous state of currentList
+      var tempFolder = extractData(currentId);
+      console.log("tempFolder: " + JSON.stringify(tempFolder));
+
+      // Recurse thru child
+      console.log("child: " + JSON.stringify(currentChild));
+      if (currentChild == undefined || currentChild == []) {
+        tempFolder["list"] = [];
+      } else {
+
+        tempFolder["list"] = reconcileFolder(currentChild);
+      }
+      console.log("tempFolder[\"list\"]: " + JSON.stringify(tempFolder["list"]));
+      currentLevelList.push(tempFolder);
+      //currentList[currentId]["list"] = reconcileFolder(nextList[i]["children"],dataListLevel[i]["list"]);
+      //currentLevelList.push(dataListLevel[currentId]);
+    }
+  }
+  console.log(" returning currentLevelist: " + JSON.stringify(currentLevelList));
+  return currentLevelList;
+}
+
 function reconcileList() {
   var updatedList = [];
+  var iteratingFolder = false;
+  var currentFolder = null;
   if (newEntry) {
     updatedList = currentList;
-    console.log(updatedList);
     newEntry = false;
-  } else if (reorderCompleted()) {
-    console.log(updatedList);
-    $('.item-draggable-list').children('label.item').each(function() {
-      updatedList.push(currentList[this.id]);
+  } else if (true) {
+    var serializedList = $('#nestable').nestable('serialize');
+    console.clear();
+    console.log(" === Serialized before: " + JSON.stringify(serializedList));
+    console.log(" === Currentlist before: " + JSON.stringify(currentList));
+    updatedList = reconcileFolder(serializedList);
+
+    /*
+    $('ol.dd-list').children().each(function() {
+      alert($(this).prop('outerHTML'));
+      console.log('The id list: ' + this.getAttribute('data-id') + this.innerHTML);
+      if ($(this).hasClass('dd-nonest')) { // If request
+        updatedList.push(currentList[this.getAttribute('data-id')]);
+      } else { // If Folder
+        currentFolder = new Array();
+      }
     });
+*/
   } else {
+
     updatedList = currentList;
   }
   currentList = updatedList;
+  console.log(" === Currentlist after: " + JSON.stringify(currentList));
+
 }
 
 
@@ -205,13 +465,6 @@ function initData() {
       }
     ];*/
   }
-  showMainTab();
-}
-function reorderCompleted() {
-  return $( "a[name=tab-2].tab-button.active" ).html() == "Reorder";
-}
-function createCompleted() {
-  return $( "a[name=tab-2].tab-button.active" ).html() == "Create";
 }
 
 function jsonSelected() {
@@ -438,27 +691,28 @@ function resetAfterCreation() {
 }
 
 function showReorderDisplay() {
-    reconcileList();
-    generateLists();
+  reconcileList();
+  generateLists();
+  clearFields();
+  document.getElementById('createNewFields').style.display = "none";
+  document.getElementById('createNewFolderFields').style.display = "none";
+  document.getElementById('reorderFields').style.display = "block";
+
+  $('#pebbleSaveButton').show();
+}
+
+function showCreateFolderDisplay() {
     clearFields();
-    document.getElementById('createNewFields').style.display = "none";
-    document.getElementById('reorderFields').style.display = "block";
-    $('.item-draggable-list').children('label.item').each(function() {
-      for (var i = 0; i < this.childNodes.length; i++) {
-        var currentClass = this.childNodes[i].className;
-        if (currentClass == "delete-item") {
-          this.childNodes[i].style.visibility = "hidden";
-        } else if (currentClass == "item-draggable-handle") {
-          this.childNodes[i].style.visibility = "visible";
-        }
-      }
-    });
-    showMainTab();
-    $('#removeTab').removeClass("active");
-    $('#modifyTab').removeClass("active");
-    $('#reorderTab').addClass("active");
-    $('#pebbleSaveButton').show();
-    $('#pebbleCancelButton').show();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#createNewFolderButton').show();
+    $('#createNewFolderFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+
 }
 
 function showCreateDisplay(usingIndex) {
@@ -466,99 +720,106 @@ function showCreateDisplay(usingIndex) {
 
     reconcileList();
     generateLists();
-    clearFields();
 
+    var isRequest = (usingIndex == null || usingIndex["type"] == "request");
+
+    clearFields();
     generateTemplates();
 
-
-    $('#modifyExistingButton').hide();
-    $('#createNewButton').show();
-
-    if (usingIndex != null) {
+    if (usingIndex != null) { // modifying
 
       currentIndex = usingIndex;
+      currentType = usingIndex["type"];
 
       $('#createNewButton').hide();
+      $('#createNewFolderButton').hide();
       $('#modifyExistingButton').show();
+      $('#modifyExistingFolderButton').show();
 
-      //$('#'+currentList[usingIndex]["method"]).trigger('click');
-      $('#GET').removeClass("active");
-      $('#PUT').removeClass("active");
-      $('#POST').removeClass("active");
-      $('#'+currentList[usingIndex]["method"]).trigger("click");
-      $('#'+currentList[usingIndex]["method"]).addClass("active");
+      if (currentType == "folder"){
 
+        $('#folderDisplayedName').val(usingIndex["name"]);
 
-      $('#displayedName').val(currentList[usingIndex]["name"]);
-      $('#httpGetUrlInput').val(currentList[usingIndex]["endpoint"]);
-      $('#jsonPostJsonInput').val(currentList[usingIndex]["json"]);
+      } else if (currentType = "request") {
+
+        $('#GET').removeClass("active");
+        $('#PUT').removeClass("active");
+        $('#POST').removeClass("active");
+
+        $('#'+usingIndex["method"]).trigger("click");
+        $('#'+usingIndex["method"]).addClass("active");
+
+        $('#displayedName').val(usingIndex["name"]);
+        $('#httpGetUrlInput').val(usingIndex["endpoint"]);
+        $('#jsonPostJsonInput').val(usingIndex["json"]);
+      }
+    } else { // Creating new
+      $('#modifyExistingButton').hide();
+      $('#modifyExistingFolderButton').hide();
+      $('#createNewButton').show();
+      $('#createNewFolderButton').show();
     }
 
-    document.getElementById('createNewFields').style.display = "block";
-    document.getElementById('reorderFields').style.display = "none";
-
-    $('#maintab').hide();
     $('#testResultsContainer').hide();
     $('#pebbleSaveButton').hide();
-    $('#pebbleCancelButton').hide();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    if (isRequest) { // show request fields
+
+      document.getElementById('createNewFields').style.display = "block";
+
+    } else { // show folder fields 
+
+      document.getElementById('createNewFolderFields').style.display = "block";
+
+    }
+
 }
 
 function showRemoveDisplay() {
 
-    reconcileList();
-    generateLists();
-    clearFields();
-
-    $('.item-draggable-list').children('label.item').each(function() {
-      for (var i = 0; i < this.childNodes.length; i++) {
-        var currentClass = this.childNodes[i].className;
-        if (currentClass == "delete-item") {
-          this.childNodes[i].style.visibility = "visible";
-        } else if (currentClass == "item-draggable-handle") {
-          this.childNodes[i].style.visibility = "hidden";
-        } else if (currentClass == "modify") {
-          this.childNodes[i].style.visibility = "hidden";
-        }
-      }
-    });
+  reconcileList();
+  generateLists();
+  clearFields();  
 }
 
 function showModifyDisplay() {
 
-    reconcileList();
-    generateLists();
-    clearFields();
+  reconcileList();
+  generateLists();
+  clearFields();
 
-    generateTemplates();
+  generateTemplates();
 
-    document.getElementById('createNewFields').style.display = "none";
-    document.getElementById('reorderFields').style.display = "block";
+  document.getElementById('createNewFields').style.display = "none";
+  document.getElementById('reorderFields').style.display = "block";
 
-    $('.item-draggable-list').children('label.item').each(function() {
-      for (var i = 0; i < this.childNodes.length; i++) {
-        var currentClass = this.childNodes[i].className;
-        if (currentClass == "modify") {
-          this.childNodes[i].style.visibility = "visible";
-        } else if (currentClass == "delete-item") {
-          this.childNodes[i].style.visibility = "hidden";
-        } else if (currentClass == "item-draggable-handle") {
-          this.childNodes[i].style.visibility = "hidden";
-        }
-      }
-    });
-
-    showMainTab();
-    $('#removeTab').removeClass("active");
-    $('#reorderTab').removeClass("active");
-    $('#modifyTab').addClass("active");
-    $('#pebbleSaveButton').show();
-    $('#pebbleCancelButton').show();
+  $('#createNewFolderFields').hide();
+  $('#pebbleSaveButton').show();
 }
 
 function clearFields() {
   $('#displayedName').val('');
   $('#httpGetUrlInput').val('');
   $('#jsonPostJsonInput').val('');
+  $('#folderDisplayedName').val('');
+}
+
+function modifyExistingFolder() {
+
+  var folderDisplayedName = $('#folderDisplayedName').val();
+
+  if (folderDisplayedName == null || folderDisplayedName == "")
+  {
+      animateRed($('#folderDisplayedName').parent());
+
+  } else {
+    currentIndex["type"] = 'folder';
+    currentIndex["name"] = folderDisplayedName;
+    newEntry = true;
+    showReorderDisplay();
+  }
 }
 
 function modifyExistingEntry() {
@@ -578,23 +839,41 @@ function modifyExistingEntry() {
       animateRed($('#jsonPostJsonInput'));
   } else {
     if (jsonSelected() || jsonPutSelected()) {
-      currentList[currentIndex]["name"] = displayedName;
-      currentList[currentIndex]["endpoint"] = endpointURL;
-      currentList[currentIndex]["json"] = jsonString;
-      currentList[currentIndex]["method"] = methodType;
+      currentIndex["type"] = 'request';
+      currentIndex["name"] = displayedName;
+      currentIndex["endpoint"] = endpointURL;
+      currentIndex["json"] = jsonString;
+      currentIndex["method"] = methodType;
     } else {
-      currentList[currentIndex]["name"] = displayedName;
-      currentList[currentIndex]["endpoint"] = endpointURL;
-      currentList[currentIndex]["json"] = "";
-      currentList[currentIndex]["method"] = methodType;
+      currentIndex["type"] = 'request';
+      currentIndex["name"] = displayedName;
+      currentIndex["endpoint"] = endpointURL;
+      currentIndex["json"] = "";
+      currentIndex["method"] = methodType;
 
     }
     newEntry = true;
     showModifyDisplay();
-    $('#removeTab').removeClass("active");
-    $('#reorderTab').removeClass("active");
-    $('#modifyTab').addClass("active");
 
+  }
+}
+
+function createNewFolder() {
+
+  var folderDisplayedName = $('#folderDisplayedName').val();
+
+  if (folderDisplayedName == null || folderDisplayedName == "")
+  {
+      animateRed($('#folderDisplayedName').parent());
+
+  } else {
+    currentList.push({
+      "type": 'folder',
+      "name": folderDisplayedName,
+      "list": []
+    });
+    newEntry = true;
+    showReorderDisplay();
   }
 }
 
@@ -616,6 +895,7 @@ function createNewEntry() {
   } else {
     if (jsonSelected() || jsonPutSelected()) {
       currentList.push({
+        "type": 'request',
         "name": displayedName,
         "endpoint": endpointURL,
         "json": jsonString,
@@ -623,6 +903,7 @@ function createNewEntry() {
       });
     } else {
         currentList.push({
+        "type": 'request',
         "name": displayedName,
         "endpoint": endpointURL,
         "json": "",
@@ -631,19 +912,8 @@ function createNewEntry() {
     }
     newEntry = true;
     showReorderDisplay();
-    $('#modifyTab').removeClass("active");
-    $('#removeTab').removeClass("active");
-    $('#reorderTab').addClass("active");
 
   }
-}
-
-function sendToPebble() {
-
-}
-
-function sendClose(){
-
 }
 
   function getConfigData() {
@@ -686,14 +956,6 @@ function sendClose(saveChanges) {
   }
 }
 
-
-function showMainTab() {
-  if (currentList.length > 0) {
-    document.getElementById('maintab').style.display = "block";
-  } else {
-    document.getElementById('maintab').style.display = "none";
-  }
-}
 
 function showHttpGetForm() {
     document.getElementById('JsonPostFields').style.display = "none";
