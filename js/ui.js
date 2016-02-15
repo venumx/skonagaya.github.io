@@ -15,6 +15,15 @@ var newEntry = false;
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
 
+$(".more_info").click(function () {
+    var $title = $(this).find(".title");
+    if (!$title.length) {
+        $(this).append('<span class="title">' + $(this).attr("title") + '</span>');
+    } else {
+        $title.remove();
+    }
+});
+
 
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
@@ -25,17 +34,18 @@ var newEntry = false;
   $( "#templateList" )
     .change(function () {
       var selectedID = document.getElementById("templateList").options[document.getElementById("templateList").selectedIndex].id;
+      var entryData = extractData(selectedID);
 
-      $('#displayedName').val(currentList[selectedID]["name"]);
-      $('#httpGetUrlInput').val(currentList[selectedID]["endpoint"]);
-      $('#jsonPostJsonInput').val(currentList[selectedID]["json"]);
+      $('#displayedName').val(entryData["name"]);
+      $('#httpGetUrlInput').val(entryData["endpoint"]);
+      $('#jsonPostJsonInput').val(entryData["json"]);
 
 
       $('#GET').removeClass("active");
       $('#PUT').removeClass("active");
       $('#POST').removeClass("active");
-      $('#'+currentList[selectedID]["method"]).trigger("click");
-      $('#'+currentList[selectedID]["method"]).addClass("active");
+      $('#'+entryData["method"]).trigger("click");
+      $('#'+entryData["method"]).addClass("active");
 
   });
 
@@ -83,6 +93,10 @@ var newEntry = false;
 
   initData();
   generateLists();
+
+  if (currentList.length < 1) {
+    //$("#reorderFields").hide();
+  }
   //$("button[title='Remove']").hide();
 
 /*
@@ -109,8 +123,32 @@ var newEntry = false;
 function testingItOut() {
 }
 
+
+function generateRequestList(currentList) {
+  var currentLevelList = [];
+
+  for (var i=0; i < currentList.length; i++) {
+    if (currentList[i]["children"] === undefined) { // request
+      currentLevelList.push(currentList[i])
+    } else { // if folder
+      var nextList = generateRequestList(currentList[i]["children"]);
+      for (var o=0; o < nextList.length; o++) {
+        currentLevelList.push(nextList[o]);
+      }
+    }
+  }
+  return currentLevelList;
+}
+
 function generateTemplates(){
   $('#templateList').empty();
+
+  console.log("==== Generating fucking templates");
+  console.log(JSON.stringify($('#nestable').nestable('serialize')));
+  var serializedRequestList = generateRequestList($('#nestable').nestable('serialize'));
+
+  console.log(JSON.stringify(serializedRequestList));
+
   var newTemplateEntry = document.createElement('option');
   newTemplateEntry.className = 'item-select-option';
   newTemplateEntry.id = "select";
@@ -120,11 +158,12 @@ function generateTemplates(){
     newTemplateEntry.innerHTML = "Select a template";
   }
   $('#templateList').append(newTemplateEntry);
-  for (var i=0; i < currentList.length; i++) {
+
+  for (var i=0; i < serializedRequestList.length; i++) {
     var newTemplateEntry = document.createElement('option');
-    newTemplateEntry.id = i;
+    newTemplateEntry.id = serializedRequestList[i]['id'];
     newTemplateEntry.className = 'item-select-option';
-    newTemplateEntry.innerHTML = currentList[i]['name'];
+    newTemplateEntry.innerHTML = serializedRequestList[i]['name'];
     $('#templateList').append(newTemplateEntry);
   }
 }
@@ -139,6 +178,7 @@ function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
   var newLi = document.createElement('li');
   newLi.setAttribute("class", liClassName);
   newLi.setAttribute("data-id", entryId);
+  $(newLi).data('name',entryName);
 
   var newRemoveButton = document.createElement('button');
   newRemoveButton.setAttribute("class", "dd-action pull-right");
@@ -464,6 +504,14 @@ function reconcileList(purgeDeleted) {
   currentList = updatedList;
   console.log(" === Currentlist after: " + JSON.stringify(currentList));
 
+
+
+  if (currentList.length == 0 ) {
+    if ($('#nestableListField').is(":visible")) $('#nestableListField').hide();  
+  } else {
+    if (!$('#nestableListField').is(":visible")) $('#nestableListField').show();
+  }
+
 }
 
 
@@ -495,6 +543,12 @@ function initData() {
         "json": '{"key":"value","key":"value"}'
       }
     ];*/
+  }
+
+  if (currentList.length == 0 ) {
+    if ($('#nestableListField').is(":visible")) $('#nestableListField').hide();  
+  } else {
+    if (!$('#nestableListField').is(":visible")) $('#nestableListField').show();
   }
 }
 
@@ -730,6 +784,7 @@ function showReorderDisplay() {
   document.getElementById('reorderFields').style.display = "block";
 
   $('#pebbleSaveButton').show();
+  $('footer').show();
 }
 
 function showCreateFolderDisplay() {
@@ -745,6 +800,7 @@ function showCreateFolderDisplay() {
 
     $('#testResultsContainer').hide();
     $('#pebbleSaveButton').hide();
+    $('footer').hide();
 
 }
 
@@ -795,6 +851,7 @@ function showCreateDisplay(usingIndex) {
 
     $('#testResultsContainer').hide();
     $('#pebbleSaveButton').hide();
+    $('footer').hide();
 
     document.getElementById('reorderFields').style.display = "none";
 
@@ -830,6 +887,7 @@ function showModifyDisplay() {
 
   $('#createNewFolderFields').hide();
   $('#pebbleSaveButton').show();
+  $('footer').show();
 }
 
 function clearFields() {

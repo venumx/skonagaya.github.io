@@ -42,3 +42,18 @@ div.modify {
 div.dd-modify{
   content:url(/images/gear.png);
 }
+footer {
+   position:fixed;
+   left:0px;
+   bottom:0px;
+   height:35  px;
+   width:100%;
+   background:#999;
+}
+.footer-text {
+  font-family: helvetica;
+  font-size: 10px;
+  text-align: center;
+  line-height: 15px;
+}
+
