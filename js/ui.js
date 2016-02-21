@@ -196,7 +196,7 @@ function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
 
   newModifyButton.onclick = function modifyLabelOnClick () {
     var thisIndex = this.parentNode.getAttribute("data-id");
-    showCreateDisplay(extractDataReference(thisIndex));
+    showCreateDisplay(thisIndex);
   }
 
   var newModifyIcon = document.createElement('i');
@@ -249,7 +249,7 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
 
   newModifyButton.onclick = function modifyLabelOnClick () {
     var thisIndex = this.parentNode.getAttribute("data-id");
-    showCreateDisplay(extractDataReference(thisIndex));
+    showCreateDisplay(thisIndex);
   }
 
   var newModifyIcon = document.createElement('i');
@@ -810,10 +810,13 @@ function showCreateDisplay(usingIndex) {
     reconcileList(false);
     generateLists();
 
+    usingIndex = extractDataReference(usingIndex);
+
     var isRequest = (usingIndex == null || usingIndex["type"] == "request");
 
     clearFields();
     generateTemplates();
+
 
     if (usingIndex != null) { // modifying
 
@@ -905,6 +908,7 @@ function modifyExistingFolder() {
   {
       animateRed($('#folderDisplayedName').parent());
 
+
   } else {
     currentIndex["type"] = 'folder';
     currentIndex["name"] = folderDisplayedName;
@@ -923,7 +927,6 @@ function modifyExistingEntry() {
   if (displayedName == null || displayedName == "")
   {
       animateRed($('#displayedName').parent());
-
   } else if (endpointURL == null || endpointURL == "") {
       animateRed($('#httpGetUrlInput').parent());
   } else if ((jsonString == null || jsonString == "") && jsonSelected()) {
@@ -941,11 +944,9 @@ function modifyExistingEntry() {
       currentIndex["endpoint"] = endpointURL;
       currentIndex["json"] = "";
       currentIndex["method"] = methodType;
-
     }
     newEntry = true;
     showModifyDisplay();
-
   }
 }
 
