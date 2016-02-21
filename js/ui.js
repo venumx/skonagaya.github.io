@@ -15,21 +15,18 @@ var newEntry = false;
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
 
-$(".more_info").click(function () {
-    var $title = $(this).find(".title");
-    if (!$title.length) {
-        $(this).append('<span class="title">' + $(this).attr("title") + '</span>');
-    } else {
-        $title.remove();
-    }
-});
-
+  $(".more_info").click(function () {
+      var $title = $(this).find(".title");
+      if (!$title.length) {
+          $(this).append('<span class="title">' + $(this).attr("title") + '</span>');
+      } else {
+          $title.remove();
+      }
+  });
 
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
   $('#createNewFolderFields').hide();
-
-
 
   $( "#templateList" )
     .change(function () {
@@ -810,9 +807,16 @@ function showCreateDisplay(usingIndex) {
     reconcileList(false);
     generateLists();
 
-    usingIndex = extractDataReference(usingIndex);
+    var isRequest = false;
 
-    var isRequest = (usingIndex == null || usingIndex["type"] == "request");
+    if (usingIndex == null || usingIndex === undefined) {
+      isRequest = true;
+    } else {
+      usingIndex = extractDataReference(usingIndex);
+       if (usingIndex["type"] == "request") {
+        isRequest = true;
+       }
+    }
 
     clearFields();
     generateTemplates();
