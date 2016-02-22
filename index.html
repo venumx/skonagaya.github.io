@@ -33,220 +33,215 @@
 
   <link rel='stylesheet' type='text/css' href='/css/bootstrap.css'>
   <link rel='stylesheet' type='text/css' href='/bower_components/Slate/dist/css/slate.min.css'>
-  <link rel='stylesheet' type='text/css' href='/css/style.css'>
   <link rel='stylesheet' type='text/css' href='/css/dd.css'>
+  <link rel='stylesheet' type='text/css' href='/css/style.css'>
 </head>
 <body>
 <div class="se-pre-con"></div>
+  <div id="content">
+    <!-- The list of items that are draggable and dynamically created -->
+    <div id='reorderFields' class='item-container'>
+      <div class="item-container">    
+        <div style="text-align:center;"class="item-container-header">Good Vibrations</div>
+        <div class="item-container-content" id="nestableListField">
 
-
-  <!-- The list of items that are draggable and dynamically created -->
-  <div id='reorderFields' class='item-container'>
-    <div class="item-container">    
-      <div style="text-align:center;"class="item-container-header">Good Vibrations</div>
-      <div class="item-container-content" id="nestableListField">
-
-        <div class="cf nestable-lists">
-          <div class="dd" id="nestable">
-              <ol class="dd-list" id="dd-root">
-              </ol>
+          <div class="cf nestable-lists">
+            <div class="dd" id="nestable">
+                <ol class="dd-list" id="dd-root">
+                </ol>
+            </div>
           </div>
-        </div>
 
-      </div>
-    <div class="item-container">    
-      <div class="item-container-content">
-        <div id="reorderList" class="item-draggable-list">
+        </div>
+      <div class="item-container">    
+        <div class="item-container-content">
+          <div id="reorderList" class="item-draggable-list">
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-    <!-- The list of items that are draggable and dynamically created -->
-  <div id='createNewFolderFields' class='item-container'>
-    <div class="item-container">
-      <!-- field to enter name of the request -->
-      <div class="item-container-header">Folder Display Name</div>
-      <div class="item-container-content">
-        <label class="item">
-          <div class="item-input-wrapper">
-            <input id="folderDisplayedName" maxlength="30" type="text" class="item-input" name="input-1" placeholder="Example: Living Room">
+      <!-- The list of items that are draggable and dynamically created -->
+    <div id='createNewFolderFields' class='item-container'>
+      <div class="item-container">
+        <!-- field to enter name of the request -->
+        <div class="item-container-header">Folder Display Name</div>
+        <div class="item-container-content">
+          <label class="item">
+            <div class="item-input-wrapper">
+              <input id="folderDisplayedName" maxlength="30" type="text" class="item-input" name="input-1" placeholder="Example: Living Room">
+            </div>
+          </label>
+        </div>
+        <div class="item-container-footer">
+          Enter the name of the folder that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.
+        </div>
+
+        <div class="item-container">
+          <div class="button-container">
+            <input id="createNewFolderButton" onclick="createNewFolder();" type="button" class="item-button" value="Save Folder">
+            <input id="modifyExistingFolderButton" onclick="modifyExistingFolder();" type="button" class="item-button" value="Save Folder">
           </div>
-        </label>
+        </div>
+
+        <div class="item-container">
+          <div class="button-container">
+            <input onclick="showModifyDisplay();" type="button" class="item-button" value="Cancel">
+          </div>
+        </div>
+
       </div>
-      <div class="item-container-footer">
-        Enter the name of the folder that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.
-      </div>
+    </div>
+
+    <!-- New item form -->
+    <div id='createNewFields' class='item-container'>
+
+
 
       <div class="item-container">
-        <div class="button-container">
-          <input id="createNewFolderButton" onclick="createNewFolder();" type="button" class="item-button" value="Save Folder">
-          <input id="modifyExistingFolderButton" onclick="modifyExistingFolder();" type="button" class="item-button" value="Save Folder">
+        <!-- field to enter name of the request -->
+        <div class="item-container-content">
+            <div class="item-input-wrapper">
+              <label style="height: 25px;" class="item">
+                  <select id='templateList' name='select-1' class='item-select'>
+                    <option class='item-select-option'>Select a template</option>
+                  </select>
+              </label>
+            </div>
+        </div>
+        <div class="item-container-footer">
+          Populate the fields below with the values of an existing request. Use this option to avoid having to enter the same values over and over.
         </div>
       </div>
 
+
+
+      <div class="item-container">
+        <div class="item-container-header">Select the type of request</div>
+        <div class="item-container-content">
+          <div class="item tab-buttons">
+            <a name="tab-1" id="GET" onclick ="showHttpGetForm();" class="tab-button active">HTTP GET</a>
+            <a name="tab-1" id="POST" onclick="showJsonPostForm();" class="tab-button">POST JSON</a>
+            <a name="tab-1" id="PUT" onclick="showJsonPostForm();" class="tab-button">PUT JSON</a>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="item-container">
+        <!-- field to enter name of the request -->
+        <div class="item-container-header">Display Name</div>
+        <div id='HttpGetFields' class="item-container-content">
+          <label class="item">
+            <div class="item-input-wrapper">
+              <input id="displayedName" maxlength="30" type="text" class="item-input" name="input-1" placeholder="Example: Open the Garage Door">
+            </div>
+          </label>
+        </div>
+        <div class="item-container-footer">
+          Enter the name of the request that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.
+        </div>
+      </div>
+
+      <!-- HTTP Endpoint Form -->
+    <div class="item-container">
+
+      <div class="item-container-header">Enter the endpoint URL</div>
+
+      <div id='HttpGetFields' class="item-container-content">
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input id="httpGetUrlInput" type="url" class="item-input" name="input-1" placeholder="Example: http://1.1.1.1:81/example.aspx">
+          </div>
+        </label>
+      </div>
+        <div class="item-container-footer">
+          An HTTP GET request will be sent to the URL entered above. Ensure that the webserver is listening on the port and context specified.
+        </div>
+    </div>
+
+      <!-- JSON POST Form -->
+      <div id='JsonPostFields' class="item-container">
+
+        <div class="item-container-header">Enter JSON content</div>
+        <div class="item-container-content">
+          <label class="item">
+            <div class="item-input-wrapper" style="height: 100px;"><label id="validationFeedbackLabel" style="position: absolute; top: 50%;transform: translateY(-50%);" ></label>
+              <textarea id="jsonPostJsonInput" style="height: 100px;" type="text" class="item-input" name="input-1" placeholder='Example:
+    {
+      "key" : "value",
+      "key" : "value",
+        ...
+    }' value='{ id: "524901", APPID: "da0bd1a46046c9f4d18a3fca969929b1" }'></textarea>
+    <input id="checkJsonButton" onclick="verifyJson();" type="button" class="item-button item-input-button" value="Check Format" style="top: 70px; right: 20px; width: 120px;">
+            </div>
+          </label>
+        </div>
+        <div class="item-container-footer">
+          Enter the JSON string above. Check the formatting of your input by clicking "Check Format". When checking format, the input field will flash green to indicate that the input is valid. Red means invalid. Duh.
+        </div>
+      </div>
+      <br>
+      <div class="item-container">
+        <div class="button-container">
+          <input id="testButton" onclick="testHttp();" type="button" class="item-button" value="Test">
+        </div>
+      </div>
+      <div class="item-container">
+        <div class="button-container">
+          <input id="createNewButton" onclick="createNewEntry();" type="button" class="item-button" value="Save Request">
+          <input id="modifyExistingButton" onclick="modifyExistingEntry();" type="button" class="item-button" value="Save Changes">
+        </div>
+      </div>
       <div class="item-container">
         <div class="button-container">
           <input onclick="showModifyDisplay();" type="button" class="item-button" value="Cancel">
         </div>
       </div>
-
-    </div>
-  </div>
-
-  <!-- New item form -->
-  <div id='createNewFields' class='item-container'>
-
-
-
-    <div class="item-container">
-      <!-- field to enter name of the request -->
-      <div class="item-container-content">
-          <div class="item-input-wrapper">
-            <label style="height: 25px;" class="item">
-                <select id='templateList' name='select-1' class='item-select'>
-                  <option class='item-select-option'>Select a template</option>
-                </select>
-            </label>
-          </div>
-      </div>
-      <div class="item-container-footer">
-        Populate the fields below with the values of an existing request. Use this option to avoid having to enter the same values over and over.
-      </div>
-    </div>
-
-
-
-    <div class="item-container">
-      <div class="item-container-header">Select the type of request</div>
-      <div class="item-container-content">
-        <div class="item tab-buttons">
-          <a name="tab-1" id="GET" onclick ="showHttpGetForm();" class="tab-button active">HTTP GET</a>
-          <a name="tab-1" id="POST" onclick="showJsonPostForm();" class="tab-button">POST JSON</a>
-          <a name="tab-1" id="PUT" onclick="showJsonPostForm();" class="tab-button">PUT JSON</a>
+      <div id="testResultsContainer" class="item-container">
+        <div  class="item-container-header">HTTP Results</div>
+        <div class="item-container-content">
+          <div id="testResults" class="item"></div>
         </div>
       </div>
-    </div>
-
-
-
-
-    <div class="item-container">
-      <!-- field to enter name of the request -->
-      <div class="item-container-header">Display Name</div>
-      <div id='HttpGetFields' class="item-container-content">
-        <label class="item">
-          <div class="item-input-wrapper">
-            <input id="displayedName" maxlength="30" type="text" class="item-input" name="input-1" placeholder="Example: Open the Garage Door">
-          </div>
-        </label>
-      </div>
-      <div class="item-container-footer">
-        Enter the name of the request that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.
-      </div>
-    </div>
-
-    <!-- HTTP Endpoint Form -->
-  <div class="item-container">
-
-    <div class="item-container-header">Enter the endpoint URL</div>
-
-    <div id='HttpGetFields' class="item-container-content">
-      <label class="item">
-        <div class="item-input-wrapper">
-          <input id="httpGetUrlInput" type="url" class="item-input" name="input-1" placeholder="Example: http://1.1.1.1:81/example.aspx">
-        </div>
-      </label>
-    </div>
-      <div class="item-container-footer">
-        An HTTP GET request will be sent to the URL entered above. Ensure that the webserver is listening on the port and context specified.
-      </div>
+      <br>
+      <br>
   </div>
 
-    <!-- JSON POST Form -->
-    <div id='JsonPostFields' class="item-container">
 
-      <div class="item-container-header">Enter JSON content</div>
-      <div class="item-container-content">
-        <label class="item">
-          <div class="item-input-wrapper" style="height: 100px;"><label id="validationFeedbackLabel" style="position: absolute; top: 50%;transform: translateY(-50%);" ></label>
-            <textarea id="jsonPostJsonInput" style="height: 100px;" type="text" class="item-input" name="input-1" placeholder='Example:
-  {
-    "key" : "value",
-    "key" : "value",
-      ...
-  }' value='{ id: "524901", APPID: "da0bd1a46046c9f4d18a3fca969929b1" }'></textarea>
-  <input id="checkJsonButton" onclick="verifyJson();" type="button" class="item-button item-input-button" value="Check Format" style="top: 70px; right: 20px; width: 120px;">
-          </div>
-        </label>
+    <!-- The submit button -->
+    
+    <div id="pebbleSaveButton" class='item-container'>
+      <div class='button-container'>
+        <input onclick="sendClose(true);" type='button' class='item-button' value='Save and Exit'>
       </div>
-      <div class="item-container-footer">
-        Enter the JSON string above. Check the formatting of your input by clicking "Check Format". When checking format, the input field will flash green to indicate that the input is valid. Red means invalid. Duh.
+    </div> 
+
+  <!--
+    <div id="pebbleSaveButton" class='item-container'>
+      <div class='button-container'>
+        <input onclick="localStorage.clear();" type='button' class='item-button' value='Delete LocalStoragee'>
       </div>
     </div>
-    <br>
-    <div class="item-container">
-      <div class="button-container">
-        <input id="testButton" onclick="testHttp();" type="button" class="item-button" value="Test">
-      </div>
-    </div>
-    <div class="item-container">
-      <div class="button-container">
-        <input id="createNewButton" onclick="createNewEntry();" type="button" class="item-button" value="Save Request">
-        <input id="modifyExistingButton" onclick="modifyExistingEntry();" type="button" class="item-button" value="Save Changes">
-      </div>
-    </div>
-    <div class="item-container">
-      <div class="button-container">
-        <input onclick="showModifyDisplay();" type="button" class="item-button" value="Cancel">
-      </div>
-    </div>
-    <div id="testResultsContainer" class="item-container">
-      <div  class="item-container-header">HTTP Results</div>
-      <div class="item-container-content">
-        <div id="testResults" class="item"></div>
-      </div>
-    </div>
-    <br>
-    <br>
+  -->
+
+    <script src='/bower_components/Slate/dist/js/slate.min.js'></script>
+    
+    <script src='/js/jquery.color.min.js'></script>
+
+    <script src='/js/jquery.nestable.js'></script>
+
+    <script src='/js/main.js'></script>
+    <script src='/js/ui.js'></script>
+    <script src='/js/util.js'></script>
 </div>
 
-
-  <!-- The submit button -->
-  
-  <div id="pebbleSaveButton" class='item-container'>
-    <div class='button-container'>
-      <input onclick="sendClose(true);" type='button' class='item-button' value='Save and Exit'>
-    </div>
-  </div> 
-
-<!--
-  <div id="pebbleSaveButton" class='item-container'>
-    <div class='button-container'>
-      <input onclick="localStorage.clear();" type='button' class='item-button' value='Delete LocalStoragee'>
-    </div>
-  </div>
--->
-
-  <script src='/bower_components/Slate/dist/js/slate.min.js'></script>
-  
-  <script src='/js/jquery.color.min.js'></script>
-
-  <script src='/js/jquery.nestable.js'></script>
-
-  <script src='/js/main.js'></script>
-  <script src='/js/ui.js'></script>
-  <script src='/js/util.js'></script>
-
-<br>
-<br>
-
-<footer>
-  <div class="item-container-content">
+  <div id="footer" class="item-container-content">
     <p class="footer-text">© Sean Konagaya 2014-2016. All rights reserved</p>
     <p class="footer-text"><a href="mailto:swkonagaya@gmail.com">Contact</a> | <a href="/v2.5/" onclick="return confirm('Changes made on this page will be discarded.')">Disable Folders</a></p>
   </div>
-</footer>
 
 </body>
 </html>
