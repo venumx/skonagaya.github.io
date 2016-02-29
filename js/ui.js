@@ -14,6 +14,7 @@ var newEntry = false;
   document.getElementById('createNewFields').style.display = "none";
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
+  $('.tooltip-background').hide();
 
   $(".more_info").click(function () {
       var $title = $(this).find(".title");
@@ -27,6 +28,98 @@ var newEntry = false;
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
   $('#createNewFolderFields').hide();
+
+  $("#folder-name-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">FOLDER DISPLAY NAME</a><br><a style="color:black;">Enter the name of the folder that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">Living Room<br>Kitchen<br>Sound System</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  $("#template-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">TEMPLATE SELECTION</a><br><a style="color:black;">Populate the fields below with the values of an existing request. Use this option to avoid having to enter the same values over and over.</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'slide',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+
+  $("#request-name-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">REQUEST DISPLAY NAME</a><br><a style="color:black;">Enter the name of the request that will be displayed on your pebble. Shorten as necessary so that it fits on your pebble screen. Maximum length is 30 characters.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">Open the Garage Door<br>Feed Fish<br>Volume Up<br>Toggle TV</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'slide',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  $("#request-type-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">REQUEST TYPE</a><br><a style="color:black;">Select the http method that is used for the request. HTTP POST and PUT includes an additional input field for JSON data.</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'slide',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  $("#endpoint-url-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">REQUEST ENDPOINT URL</a><br><a style="color:black;">An HTTP GET request will be sent to the URL entered above. Ensure that the webserver is listening on the port and context specified.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">http://1.1.1.1:81/example.aspx<br>http://myhomepage.com/ws.do</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'slide',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  $("#json-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">JSON DATA INPUT</a><br><a style="color:black;">Enter the JSON string above. Check the formatting of your input by clicking "Check Format". When checking format, the input field will flash green to indicate that the input is valid. Red means invalid.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">{<br>  "key" : "value",<br>  "key" : "value",<br>    ...<br>  }</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'slide',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+          
 
   $( "#templateList" )
     .change(function () {
@@ -66,13 +159,13 @@ var newEntry = false;
   $('#nestable').nestable({
       group: 1,
       noDragClass     : 'dd-nodrag',
-  expandBtnHTML   : '<button class="dd-action" data-action="expand" type="button"><i class="icon-chevron-right"></i></button>',
-  collapseBtnHTML : '<button class="dd-action" data-action="collapse" type="button"><i class="icon-chevron-down"></i></button>',
+  expandBtnHTML   : '<button class="dd-action" data-action="expand" type="button"><i class="glyphicon glyphicon-chevron-right glyphicon-offset"></i></button>',
+  collapseBtnHTML : '<button class="dd-action" data-action="collapse" type="button"><i class="glyphicon glyphicon-chevron-down glyphicon-offset"></i></button>',
   customActions   : {
     'remove'    : function(item,button) {
       if( item.hasClass('dd-deleted') ) {
         item.data('isDeleted',false).removeClass('dd-deleted');
-        button.html('<i class="icon-remove"></i>');
+        button.html('<i class="glyphicon glyphicon-remove glyphicon-offset"></i>');
       }
       else {
         item.data('isDeleted',true).addClass('dd-deleted');
@@ -139,8 +232,6 @@ function generateRequestList(currentList) {
 
 function generateTemplates(){
   $('#templateList').empty();
-
-  console.log("==== Generating fucking templates");
   console.log(JSON.stringify($('#nestable').nestable('serialize')));
   var serializedRequestList = generateRequestList($('#nestable').nestable('serialize'));
 
@@ -184,7 +275,7 @@ function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
   newRemoveButton.setAttribute("title", "Remove");
 
   var newRemoveIcon = document.createElement('i');
-  newRemoveIcon.setAttribute("class", "icon-remove");
+  newRemoveIcon.setAttribute("class", "glyphicon glyphicon-remove glyphicon-offset");
 
   var newModifyButton = document.createElement('button');
   newModifyButton.setAttribute("class", "dd-action pull-right");
@@ -197,7 +288,7 @@ function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
   }
 
   var newModifyIcon = document.createElement('i');
-  newModifyIcon.setAttribute("class", "icon-cog");
+  newModifyIcon.setAttribute("class", "glyphicon glyphicon-cog glyphicon-offset");
 
   var newHandle = document.createElement('div');
   newHandle.setAttribute("class", "dd-handle");
@@ -237,7 +328,7 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
   newRemoveButton.setAttribute("title", "Remove");
 
   var newRemoveIcon = document.createElement('i');
-  newRemoveIcon.setAttribute("class", "icon-remove");
+  newRemoveIcon.setAttribute("class", "glyphicon glyphicon-remove glyphicon-offset");
 
   var newModifyButton = document.createElement('button');
   newModifyButton.setAttribute("class", "dd-action pull-right");
@@ -250,7 +341,7 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
   }
 
   var newModifyIcon = document.createElement('i');
-  newModifyIcon.setAttribute("class", "icon-cog");
+  newModifyIcon.setAttribute("class", "glyphicon glyphicon-cog glyphicon-offset");
 
   var newExpandButton = document.createElement('button');
   newExpandButton.setAttribute("class", "dd-action");
@@ -259,7 +350,7 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
   newExpandButton.setAttribute("id", "custom");
 
   var newExpandIcon = document.createElement('i');
-  newExpandIcon.setAttribute("class", "icon-chevron-right");
+  newExpandIcon.setAttribute("class", "glyphicon glyphicon-chevron-right glyphicon-offset");
 
   var newCollapseButton = document.createElement('button');
   newCollapseButton.setAttribute("class", "dd-action");
@@ -268,11 +359,16 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
   newCollapseButton.setAttribute("id", "custom");
 
   var newCollapseIcon = document.createElement('i');
-  newCollapseIcon.setAttribute("class", "icon-chevron-down");
+  newCollapseIcon.setAttribute("class", "glyphicon glyphicon-chevron-down glyphicon-offset");
+
+
+  var newFolderIcon = document.createElement('i');
+  newFolderIcon.setAttribute("class", "glyphicon glyphicon-folder-open glyphicon-offset");
+  newFolderIcon.style = 'padding-left: 5px;';
 
   var newHandle = document.createElement('div');
   newHandle.setAttribute("class", "dd-handle");
-  newHandle.innerHTML = folderName;
+  newHandle.innerHTML = "<i class='glyphicon glyphicon-folder-open glyphicon-offset'></i>" + "    " +folderName;
 
   var newOl = document.createElement('ol');
   newOl.setAttribute("class","dd-list");
@@ -298,6 +394,8 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
 
   newLi.appendChild(newHandle);
   newLi.appendChild(newOl);
+
+  //newHandle.appendChild(newFolderIcon);
 
   parentNode.append(newLi);
 
@@ -371,17 +469,6 @@ function generateLists(){
     $('#reorderList').nestable({ });
   }
   */
-
-  var addItemDraggable = document.createElement('div');
-  addItemDraggable.className = "item addNewButton";
-  addItemDraggable.innerHTML = '<a href="#" onclick="showCreateDisplay(null);">Create Request</a>';
-
-  var addFolderItemDraggable = document.createElement('div');
-  addFolderItemDraggable.className = "item addNewButton";
-  addFolderItemDraggable.innerHTML = '<a href="#" onclick="showCreateFolderDisplay();">Create Folder</a>';
-
-  $('.item-draggable-list').parent().append(addItemDraggable);
-  $('.item-draggable-list').parent().append(addFolderItemDraggable);
 
   // Reload slate to enable dynamic content 
 

@@ -7,7 +7,7 @@
  * Nestable
  */
 
-.dd { background: #f7f7f7; position: relative; display: block; margin: 10px; padding: 5px; max-width: 600px; list-style: none; font-size: 13px; line-height: 20px; }
+.dd { background: #FFFAED; position: relative; display: block; margin: 10px; padding: 5px; max-width: 600px; list-style: none; font-size: 13px; line-height: 20px; }
 
 .dd-list { display: block; position: relative; margin: 0; padding: 0; list-style: none; }
 .dd-list .dd-list { padding-left: 30px; }
@@ -17,36 +17,29 @@
 .dd-empty,
 .dd-placeholder { display: block; position: relative; margin: 0; padding: 0; min-height: 20px; font-size: 13px; line-height: 20px; }
 
-.dd-handle { display: block; height: 30px; margin: 5px 0; padding: 5px 10px; color: #333; text-decoration: none; font-weight: bold; border: 1px solid #ccc;
-    background: rgb(250,250,250); /* Old browsers */
-    background: -moz-linear-gradient(top,  rgba(250,250,250,1) 0%, rgba(216,216,216,1) 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(250,250,250,1)), color-stop(100%,rgba(216,216,216,1))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(216,216,216,1) 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(216,216,216,1) 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba(250,250,250,1) 0%,rgba(216,216,216,1) 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  rgba(250,250,250,1) 0%,rgba(216,216,216,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#d8d8d8',GradientType=0 ); /* IE6-9 */
+.dd-handle { display: block; height: 30px; margin: 5px 0; padding: 5px 10px; color: #A12E36; text-decoration: none; font-weight: bold; border: 1px solid #A12E36;
+    background: #ECD9A6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ECD9A6 0%, #FFFAED 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ECD9A6), color-stop(100%,#FFFAED)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ECD9A6 0%,#FFFAED 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ECD9A6 0%,#FFFAED 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ECD9A6 0%,#FFFAED 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ECD9A6 0%,#FFFAED 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECD9A6', endColorstr='#FFFAED',GradientType=0 ); /* IE6-9 */
 
     -webkit-border-radius: 3px;
             border-radius: 3px;
     box-sizing: border-box; -moz-box-sizing: border-box;
 }
 .dd-nonest .dd-handle {
-    background: rgb(255,144,100); /* Old browsers */
-    background: -moz-linear-gradient(top,  rgba(254,252,234,1) 0%, rgba(255,144,100,1) 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(254,252,234,1)), color-stop(100%,rgba(255,144,100,1))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba(254,252,234,1) 0%,rgba(255,144,100,1) 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba(254,252,234,1) 0%,rgba(255,144,100,1) 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba(254,252,234,1) 0%,rgba(255,144,100,1) 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  rgba(254,252,234,1) 0%,rgba(255,144,100,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f7c683',GradientType=0 ); /* IE6-9 */
+    background: #ECD9A6;
 }
 
 .dd-item > button { display: block; position: relative; cursor: pointer; float: left; width: 25px; height: 20px; margin: 5px 0; padding: 0; white-space: nowrap; overflow: hidden; border: 0; background: transparent; font-size: 12px; line-height: 1; text-align: center; font-weight: bold; }
 .dd-item > button.pull-right { float:right; }
 
 .dd-placeholder,
-.dd-empty { margin: 5px 0; padding: 0; min-height: 30px; background: #FFF2ED; border: 1px dashed #FFAA88; box-sizing: border-box; -moz-box-sizing: border-box; }
+.dd-empty { margin: 5px 0; padding: 0; min-height: 30px; background: #FFFAED; border: 1px dashed #A12E36; box-sizing: border-box; -moz-box-sizing: border-box; }
 .dd-empty { border: 1px dashed #bbb; min-height: 100px; background-color: #e5e5e5;
     background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff),
                       -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
