@@ -10,7 +10,9 @@ var currentList;
 var currentIndex = null;
 var newEntry = false;
 
+
 (function() {
+
   document.getElementById('createNewFields').style.display = "none";
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
@@ -28,6 +30,25 @@ var newEntry = false;
   $('#testResultsContainer').hide();
   $('#getFrame').hide();
   $('#createNewFolderFields').hide();
+//<img src="/images/folder_demo.gif" dynsrc="/images/folder_demo.gif" loop=infinite alt="Folder and dragging demo">
+  $("#reorder-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a id="amazing"></a><img id="reorder-demo">',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  //Preload the preloader gif
+  
 
   $("#folder-name-tooltip").simpletip({
     fixed: true,
@@ -107,7 +128,7 @@ var newEntry = false;
 
   $("#json-tooltip").simpletip({
     fixed: true,
-    content: '<a style="font-weight: bold;font-size:14px">JSON DATA INPUT</a><br><a style="color:black;">Enter the JSON string above. Check the formatting of your input by clicking "Check Format". When checking format, the input field will flash green to indicate that the input is valid. Red means invalid.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">{<br>  "key" : "value",<br>  "key" : "value",<br>    ...<br>  }</a>',
+    content: '<a style="font-weight: bold;font-size:14px">JSON DATA INPUT</a><br><a style="color:black;">Enter the JSON content as a string. Check the formatting of your input by clicking "Check Format". When checking format, the input field will flash green to indicate that the input is valid. Red indicates invalid JSON formatting. Whitespace is ignored.<br><br>Use the format below:<br>{<br>  "key" : "value",<br>  "key" : "value",<br>    ...<br>  }</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">{"mode":"signal","state":"on","channel":"tv"}<br>{"environment":"test","start":true,"device":"tv"}</a>',
     position: [0,'0'],
     persistent: true,
     showEffect: 'slide',
@@ -209,6 +230,13 @@ var newEntry = false;
 })();
 
 
+function preload(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = this;
+        // Alternatively you could use:
+        // (new Image()).src = this;
+    });
+}
 
 function testingItOut() {
 }
@@ -591,9 +619,9 @@ function reconcileList(purgeDeleted) {
 
 
   if (currentList.length == 0 ) {
-    if ($('#nestableListField').is(":visible")) $('#nestableListField').hide();  
+    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();  
   } else {
-    if (!$('#nestableListField').is(":visible")) $('#nestableListField').show();
+    if (!$('#reorderFields').is(":visible")) $('#reorderFields').show();
   }
 
 }
@@ -630,17 +658,17 @@ function initData() {
   }
 
   if (currentList.length == 0 ) {
-    if ($('#nestableListField').is(":visible")) $('#nestableListField').hide();  
+    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();  
   } else {
-    if (!$('#nestableListField').is(":visible")) $('#nestableListField').show();
+    if (!$('#reorderFields').is(":visible")) $('#reorderFields').show();
   }
 }
 
 function jsonSelected() {
-  return $( "a[name=tab-1].tab-button.active" ).html() == "POST JSON";
+  return $( "a[name=tab-1].tab-button.active" ).html() == "POST";
 }
 function jsonPutSelected() {
-  return $( "a[name=tab-1].tab-button.active" ).html() == "PUT JSON";
+  return $( "a[name=tab-1].tab-button.active" ).html() == "PUT";
 }
 
 function testHttp() {
@@ -865,7 +893,6 @@ function showReorderDisplay() {
   clearFields();
   document.getElementById('createNewFields').style.display = "none";
   document.getElementById('createNewFolderFields').style.display = "none";
-  document.getElementById('reorderFields').style.display = "block";
 
   $('#pebbleSaveButton').show();
   $('footer').show();
@@ -977,7 +1004,6 @@ function showModifyDisplay() {
   generateTemplates();
 
   document.getElementById('createNewFields').style.display = "none";
-  document.getElementById('reorderFields').style.display = "block";
 
   $('#createNewFolderFields').hide();
   $('#pebbleSaveButton').show();

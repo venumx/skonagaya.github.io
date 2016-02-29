@@ -20,27 +20,35 @@
   </style>
 
   <script src='/js/jquery-2.1.4.min.js'></script>
-  <script src="/js/modernizr.min.js"></script>
+  <script src='/js/jquery.color.min.js'></script>
   <script>
     //paste this code under head tag or in a seperate js file.
     // Wait for window load
     $(window).load(function() {
       // Animate loader off screen
-      $(".se-pre-con").fadeOut("slow");;
+      $(".se-pre-con").fadeOut("slow");
+      //$(this).attr('src','/images/folder_demo.gif');
+      $("#reorder-demo").attr('src', '/images/rolling_inv.gif');
+      $('<img />').load(function() {
+        $("#reorder-demo").attr('src', '/images/folder_demo.gif');
+      }).attr('src','/images/folder_demo.gif');
     });
   </script>
-  <link rel='stylesheet' type='text/css' href='/bower_components/Slate/dist/css/slate.min.css?2'>
-  <link rel='stylesheet' type='text/css' href='/css/dd.css?2'>
-  <link rel='stylesheet' type='text/css' href='/css/style.css?2'>
-  <link rel='stylesheet' type='text/css' href='/css/bootstrap-glyphicons.css?2'>
+  <link rel='stylesheet' type='text/css' href='/bower_components/Slate/dist/css/slate.min.css?v3.0'>
+  <link rel='stylesheet' type='text/css' href='/css/dd.css?v3.0'>
+  <link rel='stylesheet' type='text/css' href='/css/style.css?v3.0'>
+  <link rel='stylesheet' type='text/css' href='/css/bootstrap-glyphicons.css?v3.0'>
 </head>
 <body>
+
+
   <div class='tooltip-background' onclick="$(this).hide()"></div>
   <div class="se-pre-con"></div>
   <div id="content">
-    <!-- The list of items that are draggable and dynamically created -->
+
     <div id='reorderFields' class='item-container'>
-      <div class="item-container">    
+      <div class="item-container">  
+      <div class="item-container-header">Reorder List   <i id="reorder-tooltip" class="glyphicon glyphicon-info-sign glyphicon-offset"></i></div>  
         
         <div class="item-container-content" id="nestableListField">
 
@@ -242,13 +250,10 @@
   -->
 
     <script src='/bower_components/Slate/dist/js/slate.min.js'></script>
-    
-    <script src='/js/jquery.color.min.js'></script>
     <script src='/js/jquery.simpletip-1.3.1.min.js'></script>
     <script src='/js/jquery.nestable.js'></script>
-
     <script src='/js/main.js'></script>
-    <script src='/js/ui.js?2'></script>
+    <script src='/js/ui.js?v3.0'></script>
     <script src='/js/util.js'></script>
 
   </div>
