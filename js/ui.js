@@ -1,3 +1,4 @@
+var JsAppVersion = "3.1.0";
 
 var $createButton = $('#createButton');
 var $createFormContainer = $('#createNewFields');
@@ -7,16 +8,28 @@ var $checkJsonButton = $('#jsonPostJsonInput');
 
 var requestTimeout = 3000;
 var currentList;
+var currentSettings;
 var currentIndex = null;
 var newEntry = false;
 
 
 (function() {
 
+  crossDomainPost();
+
+
   document.getElementById('createNewFields').style.display = "none";
   document.getElementById('JsonPostFields').style.display = "none";
   //$('#validationFeedbackLabel').hide();
   $('.tooltip-background').hide();
+  $('.update-background').hide();
+  $('.hamburger-img').hide();
+  $('.hamburger-label').hide();
+  //$('#framer').attr('src','https://www.google.com');
+
+
+  //fetchFromPebble();
+
 
   $(".more_info").click(function () {
       var $title = $(this).find(".title");
@@ -27,10 +40,120 @@ var newEntry = false;
       }
   });
 
+  // Supply the number of hearts in the about fields
+  $.ajax( {
+    type: "GET",
+    url: "http://pblweb.com/api/v1/hearts/567af43af66b129c7200002b.json",
+    error: function(xhr, statusText) { $('#heartsLabel').html('Oops. Something went wrong.') },
+    success: function(msg){ $('#heartsLabel').html(msg["hearts"])}
+  });
+
   $('#testResultsContainer').hide();
+  $('#backupFields').hide();
+  $('#reportFields').hide();
+  $('#aboutFields').hide();
+  $('#settingsFields').hide();
+  $('#donateFields').hide();
+  $('#changelogFields').hide();
   $('#getFrame').hide();
   $('#createNewFolderFields').hide();
 //<img src="/images/folder_demo.gif" dynsrc="/images/folder_demo.gif" loop=infinite alt="Folder and dragging demo">
+  $("#update-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">NEW VERSION AVAILABLE</a><br><a style="color:black;">HTTP-Push has been updated to version 3.1.0. To apply new version, download the HTTP-PUSH app from the Pebble apple store.</a><br/><br/><a style="font-weight: bold;font-size:14px">NEW FEATURES</a><br><a style="color:black;"><ul style=\"padding-left:20px\"><li>Vibration length now configurable</li><li>Restore requests from backup</li><li>Report bugs</li><li>View changelogs</li><li>Fixed crashing when request size too large</li><li>Fixed crash when assigning multiple nested folders</li></ul></a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.update-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.update-background').hide();
+    }
+  });
+
+  $("#vibration-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">VIBRATION LENGTH</a><br><a style="color:black;">Select how long vibrations last when receiving a response from a HTTP request. Select from 100, 300, and 500 milliseconds. Optionally, vibtrations can be disabled by selecting 0 milliseconds.</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.update-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.update-background').hide();
+    }
+  });
+
+
+  $("#backup-save-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">SAVE BACKUP DATA</a><br><a style="color:black;">Copy the entire text from the \"COPY DATA\" field and save it to any location. You may save the text to your phone in a notepad, email it to yourself, save it to your server, and so on. The data can be pasted in the \"LOAD DATA\" field later to restore the request list from text.</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+  $("#donate-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">FOR THE COMMUNITY</a><br><a style="color:black;">Support the developers of HTTP-PUSH. The app is made completely free by the community and for the community. Consider motivating the developers by supplying coffee and beer!</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+//[{"type":"folder","name":"Living Room","list":[{"type":"request","name":"Lights","endpoint":"http://10.0.0.1:8090/livingroomlights","json":"","method":"GET","toDelete":false}],"toDelete":false}]
+    $("#backup-load-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">LOAD BACKUP DATA</a><br><a style="color:black;">Paste the data as text into the \"LOAD DATA\" field and press the \"Load Data\" button to restore your data. An alert will be displayed if the format of the text entered is invalid.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a style="color:black;">[{"type":"folder", "name":"Living Room", "list":[{"type":"request", "name":"Lights", "endpoint":"http://10.0.0.1:8090/livingroomlights", "json":"", "method":"GET", "toDelete":false}], "toDelete":false}]</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
+  $("#report-tooltip").simpletip({
+    fixed: true,
+    content: '<a style="font-weight: bold;font-size:14px">REPORT A BUG</a><br><a style="color:black;">Contact the developer of HTTP-PUSH about any issue you\'ve encountered. Currently the only method to contact the developer is through email. Keep in mind that the more details you can provide about the problem, the easier it is to fix the issue.</a>',
+    position: [0,'0'],
+    persistent: true,
+    showEffect: 'fade',
+    hideEffect: 'none',
+    onShow: function () {
+      $('.tooltip-background').show();
+      //this.update('<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a>');
+    },
+    onHide: function () {
+      $('.tooltip-background').hide();
+    }
+  });
+
   $("#reorder-tooltip").simpletip({
     fixed: true,
     content: '<a style="font-weight: bold;font-size:14px">REORDER LIST</a><br><a style="color:black;">Drag and drop your HTTP requests in the order you want them to appear on your Pebble. Place requests into folders to organize your list. You can also place folders within folders.</a><br><br><a style="font-weight: bold;font-size:14px">EXAMPLES</a><br><a id="amazing"></a><img id="reorder-demo">',
@@ -229,6 +352,31 @@ var newEntry = false;
 
 })();
 
+
+function crossDomainPost() {
+  // Add the iframe with a unique name
+  var iframe = document.createElement("iframe");
+  var uniqueString = "CHANGE_THIS_TO_SOME_UNIQUE_STRING";
+  document.body.appendChild(iframe);
+  iframe.style.display = "none";
+  iframe.contentWindow.name = uniqueString;
+
+  // construct a form with hidden inputs, targeting the iframe
+  var form = document.createElement("form");
+  form.target = uniqueString;
+  form.action = "http://pblweb.com/api/v1/hearts/567af43af66b129c7200002b.json";
+  form.method = "POST";
+
+  // repeat for each parameter
+  var input = document.createElement("input");
+  input.type = "hidden";
+  input.name = "INSERT_YOUR_PARAMETER_NAME_HERE";
+  input.value = "INSERT_YOUR_PARAMETER_VALUE_HERE";
+  form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
 function preload(arrayOfImages) {
     $(arrayOfImages).each(function(){
@@ -628,6 +776,52 @@ function reconcileList(purgeDeleted) {
 
 
 function initData() {
+
+  currentSettings = localStorage.settings;
+  console.log( "localStorage.settings: " + currentSettings);
+
+  if (currentSettings === null || currentSettings === undefined) {
+    currentSettings = {};
+    currentSettings["vibration"] = 100;
+    localStorage.settings = JSON.stringify(currentSettings);
+
+  } else {
+    currentSettings = JSON.parse(currentSettings);
+    switch (currentSettings["vibration"]) {
+      case 100:
+        document.getElementById("vibeDurationList").selectedIndex = 0;
+        break;
+      case 300:
+        document.getElementById("vibeDurationList").selectedIndex = 1;
+        break;
+      case 500:
+        document.getElementById("vibeDurationList").selectedIndex = 2;
+        break;
+      case 0:
+        document.getElementById("vibeDurationList").selectedIndex = 3;
+        break;
+      default:
+        document.getElementById("vibeDurationList").selectedIndex = 0;
+    }
+  }
+
+  var visitedVersion = localStorage.getItem(JsAppVersion);
+
+  var isPre310 = (document.referrer.indexOf("upgrade") == -1);
+  var isFirstTimeSeeingCurrentUpdate = visitedVersion === null;
+
+
+  if (isFirstTimeSeeingCurrentUpdate) {
+    localStorage[JsAppVersion]  = "visited";
+    $("#update-tooltip").click();
+  }
+
+  if (isPre310) {
+    $('#hamburger-menu').remove();
+  }
+
+
+
   if (!(localStorage.getItem("array")===null)) {
     console.log("Found existing list. Loading localStorage.");
     console.log(localStorage['array']);
@@ -691,6 +885,8 @@ function testHttp() {
     $('#testButton').val('');
     //console.log("JSON String: " + jsonString);
     //console.log(JSON.parse(jsonString));
+      var xhr = new XMLHttpRequest();
+      xhr.timeout = 10000;
     
     if (jsonSelected()) {
 
@@ -753,7 +949,6 @@ function testHttp() {
     }
     else if (jsonPutSelected()) {
 
-      var xhr = new XMLHttpRequest();
       xhr.open('PUT', endpointURL);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onload = function() {
@@ -816,7 +1011,34 @@ function testHttp() {
 
     } else {
 
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4) {
+            $('#testResults').html(JSON.stringify(xhr.responseText));
+            $('#testResultsContainer').show();
+            $('#testButton').removeClass('pendingResponse');
+            $('#testButton').val('Test');
+            $('html, body').animate({
+                scrollTop: $("#testResultsContainer").offset().top
+            }, 1000);
+            console.log("Received response from GET:")
+            console.log(JSON.stringify(xhr.responseText));
+          }
+      }
+      xhr.open("GET", endpointURL, true);
+      try {
+        xhr.send(null);  
+      } catch (err) {
+        $('#testResults').html(JSON.stringify(err));
+        $('#testResultsContainer').show();
+        $('#testButton').removeClass('pendingResponse');
+        $('#testButton').val('Test');
+        $('html, body').animate({
+            scrollTop: $("#testResultsContainer").offset().top
+        }, 1000);
+        console.log("Error sending XMLHttpRequest: " + JSON.stringify(err));
+      }
 
+/*
 
       $.ajax({
         method: "GET",
@@ -853,7 +1075,7 @@ function testHttp() {
               }, 1000);
           }
         }
-      });
+      });*/
     }
   }
 }
@@ -895,6 +1117,8 @@ function showReorderDisplay() {
   document.getElementById('createNewFolderFields').style.display = "none";
 
   $('#pebbleSaveButton').show();
+  $('#hamburger-menu').show();
+  closeHamburger();
   $('footer').show();
 }
 
@@ -911,8 +1135,108 @@ function showCreateFolderDisplay() {
 
     $('#testResultsContainer').hide();
     $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
+}
+
+function showAboutDisplay() {
+
+    clearFields();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#aboutFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
     $('footer').hide();
 
+}
+
+function showSettingsDisplay() {
+
+    clearFields();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#settingsFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
+
+}
+
+function showDonateDisplay() {
+
+    clearFields();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#donateFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
+
+}
+
+function showReportDisplay() {
+
+    clearFields();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#reportFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
+
+}
+
+function showChangelogDisplay() {
+
+    clearFields();
+
+    $('#modifyExistingFolderButton').hide();
+    $('#changelogFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
+
+}
+
+function showBackupDisplay() {
+
+    reconcileList(false);
+    generateLists();
+    clearFields();
+
+    // load field with data
+    $('#saveData').val(JSON.stringify(currentList));
+
+    $('#modifyExistingFolderButton').hide();
+    $('#backupFields').show();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    $('#testResultsContainer').hide();
+    $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
+    $('footer').hide();
 }
 
 function showCreateDisplay(usingIndex) {
@@ -972,6 +1296,7 @@ function showCreateDisplay(usingIndex) {
 
     $('#testResultsContainer').hide();
     $('#pebbleSaveButton').hide();
+    $('#hamburger-menu').hide();
     $('footer').hide();
 
     document.getElementById('reorderFields').style.display = "none";
@@ -1006,7 +1331,17 @@ function showModifyDisplay() {
   document.getElementById('createNewFields').style.display = "none";
 
   $('#createNewFolderFields').hide();
+  $('#backupFields').hide();
+  $('#reportFields').hide();
+  $('#aboutFields').hide();
+  $('#settingsFields').hide();
+  $('#donateFields').hide();
+  $('#changelogFields').hide();
+
   $('#pebbleSaveButton').show();
+  $('#hamburger-menu').show();
+  closeHamburger();
+
   $('footer').show();
 }
 
@@ -1125,14 +1460,58 @@ function createNewEntry() {
   }
 }
 
+function saveVibration() {
+
+
+  currentSettings.vibration = parseInt(document.getElementById("vibeDurationList").options[document.getElementById("vibeDurationList").selectedIndex].value);
+
+  localStorage.settings = JSON.stringify(currentSettings);
+  showModifyDisplay();
+}
+
+function loadBackupData() {
+
+  var loadSuccessful = setConfigData($('#loadData').val());
+
+  if (loadSuccessful) {
+    currentList = JSON.parse($('#loadData').val());
+    newEntry = true;
+    showModifyDisplay();
+    $('#loadData').val('');
+  }
+}
+
+function setConfigData(stringData) {
+
+  var success = false;
+
+  try {
+      stringData = JSON.parse(stringData);
+      var options = {
+        'array': stringData
+      };
+      localStorage['array'] = JSON.stringify(options['array']);
+      success = true;
+  } catch (e) {
+      alert ('Format of the data to load is invalid');
+  }
+
+  return success;
+
+
+
+}
+
   function getConfigData() {
  
     var options = {
-      'array': currentList
+      'array': currentList,
+      'settings': currentSettings
     };
 
     // Save for next launch
     localStorage['array'] = JSON.stringify(options['array']);
+    localStorage['settings'] = JSON.stringify(options['settings']);
 
     console.log('Got options: ' + JSON.stringify(options));
     return options;
@@ -1166,6 +1545,7 @@ function sendClose(saveChanges) {
 }
 
 
+
 function showHttpGetForm() {
     document.getElementById('JsonPostFields').style.display = "none";
 
@@ -1178,3 +1558,65 @@ function showJsonPostForm() {
 function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
+
+function toggleHamburger() {
+  if ($('.hamburger.hamburger--vortex').hasClass("is-active")) { // CLOSE OPTIONS
+    $('.hamburger.hamburger--vortex').removeClass("is-active")
+    $( "#hamburger-content" ).animate({
+      width: "0px"
+    }, 500, function() {
+    });
+    $('#ham-back').animate({ width: "0%" }, 500);
+    $('#backupButton').animate({ width: "0%" }, 500);
+    $('#settingsButton').animate({ width: "0%" }, 500);
+    $('#reportButton').animate({ width: "0%" }, 500);
+    $('#donateButton').animate({ width: "0%" }, 500);
+    $('#aboutButton').animate({ width: "0%" }, 500);
+    $('#changelogButton').animate({ width: "0%" }, 500);
+    $('.hamburger-img').animate({ width: "0px" }, 500);
+    $('.hamburger-label').hide();
+  } else {
+    $('.hamburger.hamburger--vortex').addClass("is-active") // OPEN OPTIONS
+    $( "#hamburger-content" ).animate({
+      width: "100%"
+    }, 500, function() {
+    });
+    $('#ham-back').animate({ width: "100%" }, 500);
+    $('#backupButton').animate({ width: "15.5%" }, 500);
+    $('#settingsButton').animate({ width: "15.5%" }, 500);
+    $('#reportButton').animate({ width: "15.5%" }, 500);
+    $('#donateButton').animate({ width: "15.5%" }, 500);
+    $('#aboutButton').animate({ width: "15.5%" }, 500);
+    $('#changelogButton').animate({ width: "15.5%" }, 500);
+    $('.hamburger-img').animate({ width: "14px" }, 500); // global
+    $('.hamburger-label').show();
+  }
+}
+
+function closeHamburger() {
+    if ($('.hamburger.hamburger--vortex').hasClass("is-active")) { // CLOSE OPTIONS
+      $('.hamburger.hamburger--vortex').removeClass("is-active")
+      $( "#hamburger-content" ).css("width","0px");
+      $('#ham-back').css("width","0%");
+      $('#backupButton').css("width","0%");
+      $('#settingsButton').css("width","0%");
+      $('#reportButton').css("width","0%");
+      $('#donateButton').css("width","0%");
+      $('#aboutButton').css("width","0%");
+      $('#changelogButton').css("width","0%");
+      $('.hamburger-img').css("width","0px");
+      $('.hamburger-label').hide();
+    }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+

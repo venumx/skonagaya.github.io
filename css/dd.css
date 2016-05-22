@@ -7,7 +7,7 @@
  * Nestable
  */
 
-.dd { background: #FFFAED; position: relative; display: block; margin: 10px; padding: 5px; max-width: 600px; list-style: none; font-size: 13px; line-height: 20px; }
+.dd { background: #FFFAED; position: relative; display: block; margin: 10px; padding: 5px; list-style: none; font-size: 13px; line-height: 20px; }
 
 .dd-list { display: block; position: relative; margin: 0; padding: 0; list-style: none; }
 .dd-list .dd-list { padding-left: 30px; }
@@ -82,7 +82,7 @@
 
 @media only screen and (min-width: 700px) {
 
-    .dd { float: left; width: 48%; }
+    .dd { float: left; width: 97%; }
     .dd + .dd { margin-left: 2%; }
 
 }

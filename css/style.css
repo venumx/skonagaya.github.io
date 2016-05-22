@@ -96,10 +96,23 @@ body {
     top: 0px;
     width: 100%;
     height: 100%;
-    z-index: 4;
+    z-index: 5;
     background: #A12E37;
     opacity: .8;
 }
+
+.update-background {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    opacity: .9;
+    background: -webkit-radial-gradient(top left,#FFFAED,#A12E37,#A12E37,#A12E37,#A12E37,#A12E37,#A12E37);
+    background: radial-gradient(at top left,#FFFAED,#A12E37,#A12E37,#A12E37,#A12E37,#A12E37,#A12E37);
+}
+
 
 .glyphicon-offset {
   display: inline-block;
@@ -111,3 +124,41 @@ body {
   color: #A12E37;
   font-style: normal;
 }
+
+
+.hamburger-label {
+  font-size: 10px;
+  color:rgb(255, 250, 237);
+}
+
+.hamburger-img {
+  vertical-align: middle;
+  max-width:14px;
+  max-height:14px;
+  width:0px;
+}
+
+
+@media (max-width:350px) { 
+  .hamburger-label {
+    font-size: 10px;
+    color:rgb(255, 250, 237);
+    line-height: 8px;
+    vertical-align: top;
+  }
+  .img-helper {
+    vertical-align: middle;
+  }
+}
+
+@media (min-width:350px) { 
+  .hamburger-label {
+    font-size: 10px;
+    color:rgb(255, 250, 237);
+  }
+  .img-helper {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+} 
