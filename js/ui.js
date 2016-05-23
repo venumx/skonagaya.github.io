@@ -811,7 +811,7 @@ function initData() {
   var isFirstTimeSeeingCurrentUpdate = visitedVersion === null;
 
 
-  if (isFirstTimeSeeingCurrentUpdate) {
+  if (isFirstTimeSeeingCurrentUpdate && false) {
     localStorage[JsAppVersion]  = "visited";
     $("#update-tooltip").click();
   }
