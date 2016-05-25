@@ -134,7 +134,9 @@
         <div class="item-container-content">
           <label class="item">
             <div class="item-input-wrapper" style="border:none;">
-              <textarea id="saveData" disabled style="height: 100px;" type="text" class="item-input" name="input-1" ></textarea>
+              <textarea id="saveData" readonly style="height: 100px;" type="text" class="item-input" name="input-1" onclick="this.focus();this.select()" ></textarea>
+
+    <input onclick="$('#saveData').focus();$('#saveData').select()" type="button" class="item-button item-input-button" value="Select All" style="top: 70px; right: 20px; width: 120px;">
             </div>
           </label>
         </div>

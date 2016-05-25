@@ -15,7 +15,8 @@ var newEntry = false;
 
 (function() {
 
-  crossDomainPost();
+
+
 
 
   document.getElementById('createNewFields').style.display = "none";
@@ -93,7 +94,7 @@ var newEntry = false;
 
   $("#backup-save-tooltip").simpletip({
     fixed: true,
-    content: '<a style="font-weight: bold;font-size:14px">SAVE BACKUP DATA</a><br><a style="color:black;">Copy the entire text from the \"COPY DATA\" field and save it to any location. You may save the text to your phone in a notepad, email it to yourself, save it to your server, and so on. The data can be pasted in the \"LOAD DATA\" field later to restore the request list from text.</a>',
+    content: '<a style="font-weight: bold;font-size:14px">SAVE BACKUP DATA</a><br><a style="color:black;">Copy the entire text from the \"COPY DATA\" field and save it to any location. You may save the text to your phone in a notepad, email it to yourself, save it to your server, and so on. The data can be pasted in the \"LOAD DATA\" field later to restore the request list from text. Use the \"Select All\" button to highlight the entire data content.</a>',
     position: [0,'0'],
     persistent: true,
     showEffect: 'fade',
@@ -352,31 +353,6 @@ var newEntry = false;
 
 })();
 
-
-function crossDomainPost() {
-  // Add the iframe with a unique name
-  var iframe = document.createElement("iframe");
-  var uniqueString = "CHANGE_THIS_TO_SOME_UNIQUE_STRING";
-  document.body.appendChild(iframe);
-  iframe.style.display = "none";
-  iframe.contentWindow.name = uniqueString;
-
-  // construct a form with hidden inputs, targeting the iframe
-  var form = document.createElement("form");
-  form.target = uniqueString;
-  form.action = "http://pblweb.com/api/v1/hearts/567af43af66b129c7200002b.json";
-  form.method = "POST";
-
-  // repeat for each parameter
-  var input = document.createElement("input");
-  input.type = "hidden";
-  input.name = "INSERT_YOUR_PARAMETER_NAME_HERE";
-  input.value = "INSERT_YOUR_PARAMETER_VALUE_HERE";
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
-}
 
 function preload(arrayOfImages) {
     $(arrayOfImages).each(function(){
