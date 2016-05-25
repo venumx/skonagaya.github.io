@@ -1589,7 +1589,3 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-
-function selectAllData(){
-    document.getElementById("saveData")setSelectionRange(0, 9999);
-}
