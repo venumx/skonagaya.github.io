@@ -1322,6 +1322,7 @@ function showModifyDisplay() {
   generateTemplates();
 
   document.getElementById('createNewFields').style.display = "none";
+  document.getElementById('configSmartthings').style.display = "none";
 
   $('#createNewFolderFields').hide();
   $('#backupFields').hide();
