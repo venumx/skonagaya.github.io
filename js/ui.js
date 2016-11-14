@@ -54,8 +54,11 @@ function connectSmartthings()
   if((clientid !== "" || clientid !== undefined)
       && (clientsecret !== "" || clientsecret !== undefined))
   {
+    alert("redirecting");
     window.location.href = "https://graph.api.smartthings.com/oauth/authorize?response_type=code&client_id="
                             + clientid + "&scope=app&redirect_uri=venumx.github.io";
+  }else {
+    alert("SOMETHING WENT WRONG");
   }
 }
 
