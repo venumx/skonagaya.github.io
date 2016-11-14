@@ -16,7 +16,12 @@
 }
 
 .smartthingsbutton {
-  background-image: url('../images/smartthingslogo.png');
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  background-size: 100px;
+  background-image: url(../images/smartthingslogo.png);
+  border: 0px;
 }
 
 .addNewButton {
