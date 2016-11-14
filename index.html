@@ -43,7 +43,7 @@
   <link rel='stylesheet' type='text/css' href='./css/hamburger.min.css?v3.1.0'>
 </head>
   <body>
-    
+
     <div id="hamburger-menu">
       <div id="ham-back" style="height:50px;width:0%;border-bottom: 1px solid #A12E36;background-color:#FFFAED;top:0px;"></div>
       <button style="z-index: 7;position:absolute; top: 2.5px; left: 0px;" onclick="toggleHamburger();" class="hamburger hamburger--vortex" type="button">
@@ -76,7 +76,7 @@
             <label class='hamburger-label'>Change</label>
           </img>
         </div>
-      
+
         <!-- REPORT BUTTON -->
         <div id='reportButton' onclick='showReportDisplay();' style="background-color: #A12E36;text-align: center;position:relative;top:7.5px;float:left;height:35px; width:0%;border-radius:5px;5px;margin-right:0.5%;margin-left:0.5%;">
           <span class="img-helper"></span>
@@ -110,9 +110,9 @@
   <div id="content">
 
     <div id='reorderFields' class='item-container'>
-      <div class="item-container">  
-      <div class="item-container-header">Reorder List   <i id="reorder-tooltip" class="glyphicon glyphicon-info-sign glyphicon-offset"></i></div>  
-        
+      <div class="item-container">
+      <div class="item-container-header">Reorder List   <i id="reorder-tooltip" class="glyphicon glyphicon-info-sign glyphicon-offset"></i></div>
+
         <div class="item-container-content" id="nestableListField">
 
           <div class="cf nestable-lists">
@@ -382,7 +382,7 @@
         <div class="item-container-footer">
           Populate the fields below with the values of an existing request. Use this option to avoid having to enter the same values over and over.
         </div>
-        --> 
+        -->
       </div>
 
 
@@ -486,24 +486,30 @@
     <!-- The submit button -->
 
     <div id="pebbleSaveButton">
-    
+
+      <div class='item-container'>
+        <div class='button-container'>
+          <input onclick="loginWithSmartthings();" type='button' class='smarthings-logon' width="100px" height="100px" value='' />
+        </div>
+      </div>
+
       <div  class='item-container'>
         <div class='button-container'>
           <input onclick="showCreateDisplay(null);" type='button' class='item-button' value='Create a Request'>
         </div>
-      </div> 
-      
+      </div>
+
       <div  class='item-container'>
         <div class='button-container'>
           <input onclick="showCreateFolderDisplay();" type='button' class='item-button' value='Create a Folder'>
         </div>
-      </div> 
-      
+      </div>
+
       <div  class='item-container'>
         <div class='button-container'>
           <input onclick="sendClose(true);" type='button' class='item-button' value='Save and Exit'>
         </div>
-      </div> 
+      </div>
     </div>
 
 
