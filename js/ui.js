@@ -16,6 +16,7 @@ var newEntry = false;
 (function() {
   document.getElementById('createNewFields').style.display = "none";
   document.getElementById('JsonPostFields').style.display = "none";
+  document.getElementByID('configSmartthings').style.display = "none";
   //$('#validationFeedbackLabel').hide();
   $('.tooltip-background').hide();
   $('.update-background').hide();
@@ -167,7 +168,7 @@ var newEntry = false;
   });
 
   //Preload the preloader gif
-  
+
 
   $("#folder-name-tooltip").simpletip({
     fixed: true,
@@ -259,7 +260,7 @@ var newEntry = false;
       $('.tooltip-background').hide();
     }
   });
-          
+
 
   $( "#templateList" )
     .change(function () {
@@ -340,7 +341,7 @@ var newEntry = false;
       } else {
         console.log ('Folder!');
       }
-    });   
+    });
 
   });
 
@@ -389,7 +390,7 @@ function generateTemplates(){
   newTemplateEntry.id = "select";
   if (currentList.length == 0 || currentList == null) {
     newTemplateEntry.innerHTML = "No templates to choose from";
-  } else { 
+  } else {
     newTemplateEntry.innerHTML = "Select a template";
   }
   $('#templateList').append(newTemplateEntry);
@@ -445,7 +446,7 @@ function generateRequestHtml(entryName,entryId,parentNode,markDeleted) {
     newRemoveButton.innerHTML = 'undo';
     $(newLi).data('isDeleted',true);
   } else {
-    newRemoveButton.appendChild(newRemoveIcon);  
+    newRemoveButton.appendChild(newRemoveIcon);
   }
   newModifyButton.appendChild(newModifyIcon);
 
@@ -524,9 +525,9 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
     newRemoveButton.innerHTML = 'undo';
     $(newLi).data('isDeleted',true);
   } else {
-    newRemoveButton.appendChild(newRemoveIcon);  
+    newRemoveButton.appendChild(newRemoveIcon);
   }
-  
+
   newModifyButton.appendChild(newModifyIcon);
 
 
@@ -535,7 +536,7 @@ function generateFolderHtml(folderName,folderId,parentNode,markDeleted){
 
   newLi.appendChild(newRemoveButton);
   newLi.appendChild(newModifyButton);
-  
+
   newLi.appendChild(newExpandButton);
   newLi.appendChild(newCollapseButton);
 
@@ -555,8 +556,8 @@ function generateList(parentNode,nextList,ddIndex) {
 
   for (var i=0; i < nextList.length; i++) {
     var markDelete = nextList[i]["toDelete"];
-    if (nextList[i]["type"] == null ||     //If null, mean's it's before folders 
-      nextList[i]["type"] == 'request') {  //feature was added. And should be 
+    if (nextList[i]["type"] == null ||     //If null, mean's it's before folders
+      nextList[i]["type"] == 'request') {  //feature was added. And should be
                                               //treated as a request
       //createListHtml(nextList[i]["name"],i);
       generateRequestHtml(nextList[i]["name"],(ddIndex?ddIndex+"-":"") + i.toString(),parentNode,markDelete);
@@ -599,9 +600,9 @@ function generateLists(){
   $('.item.addNewButton').remove();
   for (var i=0; i < currentList.length; i++) {
 
-    
-    if (currentList[i]["type"] == null ||     //If null, mean's it's before folders 
-      currentList[i]["type"] == 'request') {  //feature was added. And should be 
+
+    if (currentList[i]["type"] == null ||     //If null, mean's it's before folders
+      currentList[i]["type"] == 'request') {  //feature was added. And should be
                                               //treated as a request
       createRequestHtml(currentList[i]["name"],i);
     } else if (currentList[i]["type"] == 'folder'){
@@ -617,7 +618,7 @@ function generateLists(){
   }
   */
 
-  // Reload slate to enable dynamic content 
+  // Reload slate to enable dynamic content
 
 }
 
@@ -627,10 +628,10 @@ function extractData(indexString) {
 
   for (var i=0; i < indexArray.length; i++) {
     if (currentListIndex["type"] == "folder") {
-      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])]; 
+      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])];
     }
     else {
-      currentListIndex = currentListIndex[parseInt(indexArray[i])]; 
+      currentListIndex = currentListIndex[parseInt(indexArray[i])];
     }
   }
 
@@ -644,10 +645,10 @@ function extractDataReference(indexString) {
 
   for (var i=0; i < indexArray.length; i++) {
     if (currentListIndex["type"] == "folder") {
-      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])]; 
+      currentListIndex = currentListIndex["list"][parseInt(indexArray[i])];
     }
     else {
-      currentListIndex = currentListIndex[parseInt(indexArray[i])]; 
+      currentListIndex = currentListIndex[parseInt(indexArray[i])];
     }
   }
 
@@ -738,7 +739,7 @@ function reconcileList(purgeDeleted) {
 
 
   if (currentList.length == 0 ) {
-    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();  
+    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();
   } else {
     if (!$('#reorderFields').is(":visible")) $('#reorderFields').show();
   }
@@ -806,7 +807,7 @@ function initData() {
     /*[
       {
         "name" : "Example HTTP GET",
-        "endpoint": "https://example.com:8080/endpoint", 
+        "endpoint": "https://example.com:8080/endpoint",
         "json": ""
       },
       {
@@ -823,7 +824,7 @@ function initData() {
   }
 
   if (currentList.length == 0 ) {
-    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();  
+    if ($('#reorderFields').is(":visible")) $('#reorderFields').hide();
   } else {
     if (!$('#reorderFields').is(":visible")) $('#reorderFields').show();
   }
@@ -858,7 +859,7 @@ function testHttp() {
     //console.log(JSON.parse(jsonString));
       var xhr = new XMLHttpRequest();
       xhr.timeout = 10000;
-    
+
     if (jsonSelected()) {
 
   /*
@@ -943,10 +944,10 @@ function testHttp() {
             }, 1000);
           }
       };
-      xhr.onreadystatechange = function (oEvent) {  
+      xhr.onreadystatechange = function (oEvent) {
         console.log("Received response for PUT request");
-        if (xhr.readyState === 4) {  
-          if (xhr.status === 200) {  
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
             $('#testResults').html(JSON.stringify(xhr.responseText));
             $('#testResultsContainer').show();
             $('#testButton').removeClass('pendingResponse');
@@ -970,9 +971,9 @@ function testHttp() {
             $('html, body').animate({
                 scrollTop: $("#testResultsContainer").offset().top
             }, 1000);
-          } 
-        }  
-      }; 
+          }
+        }
+      };
 
       xhr.send(jsonString);
       console.log("Sending Put request: " + jsonString);
@@ -997,7 +998,7 @@ function testHttp() {
       }
       xhr.open("GET", endpointURL, true);
       try {
-        xhr.send(null);  
+        xhr.send(null);
       } catch (err) {
         $('#testResults').html(JSON.stringify(err));
         $('#testResultsContainer').show();
@@ -1210,6 +1211,27 @@ function showBackupDisplay() {
     $('footer').hide();
 }
 
+function loginWithSmartthings() {
+    // Show the div that contains user entry fields
+
+    reconcileList(false);
+    generateLists();
+
+    var isRequest = true;
+
+    clearFields();
+    generateTemplates();
+
+    document.getElementById('reorderFields').style.display = "none";
+
+    if (isRequest) { // show request fields
+
+      document.getElementById('configSmartthings').style.display = "block";
+
+    }
+
+}
+
 function showCreateDisplay(usingIndex) {
     // Show the div that contains user entry fields
 
@@ -1276,7 +1298,7 @@ function showCreateDisplay(usingIndex) {
 
       document.getElementById('createNewFields').style.display = "block";
 
-    } else { // show folder fields 
+    } else { // show folder fields
 
       document.getElementById('createNewFolderFields').style.display = "block";
 
@@ -1288,7 +1310,7 @@ function showRemoveDisplay() {
 
   reconcileList(false);
   generateLists();
-  clearFields();  
+  clearFields();
 }
 
 function showModifyDisplay() {
@@ -1474,7 +1496,7 @@ function setConfigData(stringData) {
 }
 
   function getConfigData() {
- 
+
     var options = {
       'array': currentList,
       'settings': currentSettings
